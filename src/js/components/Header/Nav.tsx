@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaRegHeart as SavedIcon } from "react-icons/fa";
 import { CgProfile as ProfileIcon } from "react-icons/cg";
-import Logo from "../../../assets/images/AutoTrader-logo.png";
+import Logo from "../../../assets/images/logo.png";
 import MenuNav from "./MenuNav";
 import AuthModal from "../Auth/AuthModal";
 import { useSelector } from "react-redux";

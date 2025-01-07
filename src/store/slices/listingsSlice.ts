@@ -79,7 +79,7 @@ export const createVehicleListing = createAsyncThunk(
         engine_size: listing.engine_size,
         images: listing.images
       };
-  
+
       try {
         const response = await fetch('http://localhost:5000/api/vehicles', {
           method: 'POST',
@@ -88,12 +88,12 @@ export const createVehicleListing = createAsyncThunk(
           },
           body: JSON.stringify(transformedListing)
         });
-  
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         return data;
       } catch (error) {
@@ -136,7 +136,7 @@ export const updateVehicleListing = createAsyncThunk(
         engine_size: listing.engine_size,
         images: listing.images
       };
-  
+
       try {
         const response = await fetch(`http://localhost:5000/api/vehicles/${transformedListing.id}`, {
           method: 'PUT',
@@ -145,12 +145,12 @@ export const updateVehicleListing = createAsyncThunk(
           },
           body: JSON.stringify(transformedListing)
         });
-  
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
         return data;
       } catch (error) {
@@ -164,7 +164,7 @@ export const fetchVehicleListings = createAsyncThunk(
   'vehicles/fetchAll',
   async () => {
     const response = await fetch('http://localhost:5000/api/vehicles');
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message);
@@ -178,12 +178,12 @@ export const fetchVehicleById = createAsyncThunk(
     'vehicles/fetchById',
     async (id: number) => {
       const response = await fetch(`http://localhost:5000/api/vehicles/${id}`);
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
       }
-  
+
       return await response.json();
     }
   );
@@ -207,10 +207,7 @@ const vehicleSlice = createSlice({
       })
       .addCase(updateVehicleListing.fulfilled, (state, action) => {
         state.loading = false;
-        // state.listings.push(action.payload);
         state.currentListing = action.payload;
-        console.log({state, action});
-        
       })
       .addCase(updateVehicleListing.rejected, (state, action) => {
         state.loading = false;

@@ -3,9 +3,9 @@
 Created by Kirsty Richmond.
 
 ## Video Demo:
+https://www.youtube.com/watch?v=frmYy23yCwU
 
-
-## Description: 
+## Description:
 
 \*\* **Built for learning purposes only** \*\*
 
@@ -36,7 +36,7 @@ Design choices:
 - When deciding how it would be best to link the user's vehicle listing to their account, I decided to add the user's id to the vehicle listing and that way I could fetch vehicles that had the logged in user's id when displaying the user's listings on the account page. I decided to add the user_id to the vehicles table and create a foreign key relationship because the foreign key ensures that every vehicle belongs to a valid user and you can easily find all vehicles belonging to a user with a simple query.
 
 
-## File info: 
+## File info:
 
 /backend/seed_data.py
 This file contains a function that seeds the database with sample data. The script uses Flask, SQLAlchemy and werkzeug to create and populate the database tables.
@@ -51,7 +51,7 @@ This file contains SQLAlchemy models for Vehicle and User and a SQLAlchemy type 
 This file defines a set of API routes using Flask. There are routes for handling user authentication and vehicle related data.
 
 /backend/app/utils.py
-This file contains a get_postcode_coordinates function which takes the users postcode, uses the postcodes.io API to then retrieve the latitude, longitude and location data. 
+This file contains a get_postcode_coordinates function which takes the users postcode, uses the postcodes.io API to then retrieve the latitude, longitude and location data.
 The calculate_distance function uses the coordinates retrieved from the get_postcode_coordinates function to calculate the distance between the vehicles location and the users location.
 
 /src/store/slices/advertSlice.ts
@@ -121,7 +121,7 @@ This file contains the RoutePaths object which contains the endpoints for the pr
 The accounts component contains the sign out button and the MyAdverts component.
 
 /src/js/views/Advert.tsx
-The ImageGrid component allows the user to add images from their device, set a main photo and reorder the images. The Advert component contains the form for the user to input the data for the vehicle they are selling. 
+The ImageGrid component allows the user to add images from their device, set a main photo and reorder the images. The Advert component contains the form for the user to input the data for the vehicle they are selling.
 
 /src/js/views/CarDetails.tsx
 The CarDetails component displays all the information on the vehicle. The GalleryModal is used in this component so the user can view all vehicle images.

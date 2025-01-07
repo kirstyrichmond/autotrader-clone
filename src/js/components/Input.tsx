@@ -17,7 +17,7 @@ const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, 
         <div className="mb-2">
             <div className="mb-2">
                 <label className="block text-gray-700 text-sm font-bold mb-2">{label}</label>
-                { description && <p className="text-sm text-gray-600">{ description }</p> }
+                { description && <p className="text-sm text-gray-600 mb-2">{ description }</p> }
                 <input
                     id={name}
                     name={name}
@@ -27,7 +27,7 @@ const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, 
                     onChange={(e) => onChange(e)}
                     // className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-                    // className={ `${ meta.touched && !meta.valid && "text-[#fc8181]" } disabled:cursor-not-allowed 
+                    // className={ `${ meta.touched && !meta.valid && "text-[#fc8181]" } disabled:cursor-not-allowed
                                 // p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full` }
                 />
             </div>

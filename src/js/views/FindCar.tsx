@@ -48,11 +48,6 @@ export default function FindCar() {
   },
     formikHelpers: FormikHelpers<{ registration: string; mileage: string; }>
 ) => {
-  console.log("Form submitted with values:", values); // Add this line
-
-  console.log("HANDLE SUBMIT!");
-  
-    // setIsLoading(true);
     setRegSubmitted(true);
 
     try {
@@ -62,7 +57,7 @@ export default function FindCar() {
       });
 
       console.log('Step 1 - Initial Response:', response.status);
-      
+
       const data = await response.json();
       console.log('Step 2 - Data received:', data);
 
@@ -72,9 +67,6 @@ export default function FindCar() {
       }
 
       console.log('Step 3b - Processing data');
-
-      console.log(capitaliseFormat(data?.VehicleRegistration?.Colour), "<< capitaliseFormat(data?.VehicleRegistration?.Colour)");
-      
       try {
         const vehicleData = {
           make: data?.VehicleRegistration?.MakeModel?.split(' ')[0] || '',
@@ -97,23 +89,19 @@ export default function FindCar() {
         };
 
         console.log('Step 4 - Vehicle data formatted:', vehicleData);
-        
+
         setRegSubmitted(true);
         setNewVehicleData(vehicleData);
         dispatch(setVehicleData(vehicleData));
         formikHelpers.resetForm({ values });
-        
+
         console.log('Step 5 - Data dispatched to Redux');
       } catch (dataError) {
-        console.error('Data processing error:', dataError);
         throw new Error('Error processing vehicle data');
       }
 
     } catch (err: any) {
       console.error('Error in submission:', err);
-      // setError(err.message || "Vehicle lookup failed");
-    } finally {
-      // setIsLoading(false);
     }
 };
 
@@ -145,8 +133,6 @@ export default function FindCar() {
       }}
     >
     { (formik) => {
-    console.log("Current form values:", formik.values); // Add this line
-
     return (
         // @ts-ignore
       <Form>
@@ -157,9 +143,7 @@ export default function FindCar() {
           <div className="space-y-4 min-w-96 mb-4">
             <div className="space-y-1">
               <h1 className="text-base font-semibold text-gray-800">{newVehicleData?.make} {newVehicleData?.model}</h1>
-              {/* <h2 className="text-xl text-gray-700">{variant}</h2> */}
             </div>
-
             <div className="space-y-4 mt-8">
               {detailRows.map(({ label, value }) => (
                 <div
@@ -186,6 +170,7 @@ export default function FindCar() {
           <>
             <Input
               label="Registration number"
+              description="Due to the limitations of the test API, the registration number must contain the letter 'A'."
               name="registration"
               value={ formik.values.registration }
               meta={ {
@@ -194,7 +179,7 @@ export default function FindCar() {
                   touched: formik.touched.registration
               } }
               onChange={(e) => formik.handleChange(e) }
-            /> 
+            />
             <Input
               label="Current mileage"
               name="mileage"

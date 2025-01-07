@@ -41,8 +41,6 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }) => {
     try {
-      console.log('Attempting login with:', credentials.email);
-      
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -53,9 +51,6 @@ export const login = createAsyncThunk(
       });
 
       const data = await response.json();
-      console.log('Login response data:', data);  // Add this debug log
-      console.log('User object in response:', data.user);  // Add this debug log
-
       if (!response.ok) {
         throw new Error(data.error || 'Login failed');
       }
@@ -109,11 +104,9 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log('Login response data:', action.payload);  // Add this
         state.loading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
-        console.log('Updated state:', state);  // Add this
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
