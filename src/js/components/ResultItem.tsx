@@ -31,7 +31,7 @@ export interface Vehicle {
   distance?: number;
 }
 
-interface ResultItemProps {
+export interface ResultItemProps {
   vehicle: Vehicle;
 }
 

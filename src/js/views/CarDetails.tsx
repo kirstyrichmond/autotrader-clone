@@ -1,21 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Heart, Share2, ArrowLeft, Grid, Phone, CameraIcon } from 'lucide-react';
+import { Heart, Share2, ArrowLeft, Phone, CameraIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { fetchVehicleById, VehicleListing } from '../../store/slices/listingsSlice';
+import { fetchVehicleById } from '../../store/slices/listingsSlice';
 import { AppDispatch, RootState } from '../../store';
 import { IoLocationSharp as LocationIcon } from "react-icons/io5";
 import GalleryModal from '@/components/GalleryModal';
 import { Vehicle } from '@/components/ResultItem';
+import { addFavorite, fetchFavorites, removeFavorite } from '../../store/slices/favoritesSlice';
 
 const CarDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { currentListing: vehicle, loading, error } = useSelector((state: RootState) => state.vehicles);
+  const userId = useSelector((state: RootState) => state.auth.user?.id);
+  const favorites = useSelector((state: RootState) => state.favorites.favorites);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const isFavorite = favorites.some((favorite) => favorite.id === vehicle?.id);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!userId) {
+      console.log('No user ID found');
+      return;
+    }
+    
+    if (!vehicle?.id) {
+      console.log('No vehicle ID found');
+      return;
+    }
+  
+    try {
+      if (isFavorite) {
+        await dispatch(removeFavorite({ 
+          userId, 
+          vehicleId: vehicle.id 
+        })).unwrap();
+      } else {        
+        await dispatch(addFavorite({ 
+          userId, 
+          vehicleId: vehicle.id 
+        })).unwrap();
+      }
+    } catch (error) {
+      console.error('Favorite action failed:', error);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -23,6 +58,12 @@ const CarDetails = () => {
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchFavorites(userId));
+    }
+  }, [userId, dispatch]);
 
   if (loading) {
     return (
@@ -85,7 +126,7 @@ const CarDetails = () => {
     <>
       <div className="max-w-7xl mx-auto bg-white">
         {/* Header */}
-        {/* <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b">
           <button 
             onClick={handleBack}
             className="flex items-center text-blue-600 gap-2"
@@ -94,14 +135,18 @@ const CarDetails = () => {
             Back to results
           </button>
           <div className="flex gap-4">
-            <button className="text-gray-600 hover:text-gray-800">
-              <Heart className="w-6 h-6" />
+            <button 
+              onClick={handleFavoriteClick}
+              disabled={vehicle.user_id === userId}
+              className={`${isFavorite ? 'text-red-500' : 'text-gray-600'} hover:text-red-500`}
+            >
+              <Heart className="w-6 h-6" fill={isFavorite ? 'currentColor' : 'none'} />
             </button>
             <button className="text-gray-600 hover:text-gray-800">
               <Share2 className="w-6 h-6" />
             </button>
           </div>
-        </div> */}
+        </div>
 
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">

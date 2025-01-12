@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import advertReducer from './slices/advertSlice';
 import vehicleReducer from './slices/listingsSlice';
+import favoritesReducer from './slices/favoritesSlice';
 import { persistReducer } from 'redux-persist';
 import { persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // Use localStorage instead of sessionStorage
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   advert: advertReducer,
   vehicles: vehicleReducer,
+  favorites: favoritesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

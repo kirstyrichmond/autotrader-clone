@@ -21,6 +21,14 @@ const Nav: React.FC = () => {
         }
     }
 
+    const handleSavedClick = () => {
+        if (isLoggedIn) {
+            navigate('/secure/saved-adverts');
+        } else {
+            setIsAuthModalOpen(true);
+        }
+    }
+
     return (
       <><div className="flex py-1 justify-between items-center w-full">
             <div onClick={() => navigate('/')} className="cursor-pointer">
@@ -28,10 +36,10 @@ const Nav: React.FC = () => {
             </div>
             <MenuNav />
             <div className="flex gap-6 items-center">
-                {/* <button className="text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
+                <button onClick={handleSavedClick} className="text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
                     <SavedIcon height={16} />
                     <p className="text-[12px]">Saved</p>
-                </button> */}
+                </button>
                 <button onClick={handleAccountClick} className="text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
                     <ProfileIcon height={16} />
                     <p className="text-[12px]">Account</p>

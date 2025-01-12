@@ -55,6 +55,12 @@ class Vehicle(db.Model):
     attention_grabber = db.Column(db.String)
     images = db.Column(JSONEncodedDict)
 
+favorites = db.Table('favorites',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('vehicle_id', db.Integer, db.ForeignKey('vehicle.id'), primary_key=True),
+    db.Column('created_at', db.DateTime, default=datetime.now(tz=timezone.utc))
+)
+
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
@@ -62,6 +68,13 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
+
+    favorite_vehicles = db.relationship(
+        'Vehicle',
+        secondary=favorites,
+        lazy='dynamic',
+        backref=db.backref('favorited_by', lazy='dynamic')
+    )
     
     def __init__(self, email, password):
         self.email = email

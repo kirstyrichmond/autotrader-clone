@@ -57,7 +57,7 @@ def login():
     
     user = User.query.filter_by(email=email).first()
     print(f"User found: {user is not None}")
-    print(f"User ID: {user.id if user else None}")  # Add this debug line
+    print(f"User ID: {user.id if user else None}")
     
     if not user:
         return jsonify({'error': 'Invalid credentials'}), 400
@@ -67,7 +67,7 @@ def login():
             return jsonify({
                 'message': 'Login successful',
                 'user': {
-                    'id': user.id,  # Make sure id is included
+                    'id': user.id,
                     'email': user.email
                 }
             }), 200
@@ -164,10 +164,6 @@ def create_vehicle():
         data = request.json
         print("Received data:", data)
 
-        # if 'user_id' not in data:
-        #     return jsonify({"error": "user_id is required"}), 400
-
-        # Get coordinates from postcode
         coords = get_postcode_coordinates(data['postcode'])
         vehicle_lat, vehicle_lon, vehicle_location = coords
 
@@ -184,7 +180,7 @@ def create_vehicle():
 
         # Create new vehicle with the provided user_id
         new_vehicle = Vehicle(
-            user_id=data['user_id'],  # Use the provided user_id
+            user_id=data['user_id'],
             make=data['make'],
             model=data['model'],
             year=data['year'],
@@ -294,9 +290,27 @@ def update_vehicle(vehicle_id):
             'message': 'Vehicle updated successfully',
             'vehicle': {
                 'id': vehicle.id,
+                'user_id': vehicle.user_id,
                 'make': vehicle.make,
-                'model': vehicle.model
-                # Add other fields as needed
+                'model': vehicle.model,
+                'price': vehicle.price,
+                'year': vehicle.year,
+                'body_type': vehicle.body_type,
+                'mileage': vehicle.mileage,
+                'transmission': vehicle.transmission,
+                'fuel_type': vehicle.fuel_type,
+                'owners': vehicle.owners,
+                'service_history': vehicle.service_history,
+                'attention_grabber': vehicle.attention_grabber,
+                'condition': vehicle.condition,
+                'images': vehicle.images,
+                'dealer_name': vehicle.dealer_name,
+                'dealer_rating': vehicle.dealer_rating,
+                'review_count': vehicle.review_count,
+                'location': vehicle.location,
+                'engine_size': vehicle.engine_size,
+                'power': vehicle.power,
+                'postcode': vehicle.postcode,
             }
         }), 200
     except Exception as e:
@@ -365,3 +379,141 @@ def search_vehicles():
             'vehicles': results,
             'total': len(results)
         })
+    
+# Favorites Routes
+@api.route("/favorites/<int:user_id>", methods=['GET'])
+def get_favorites(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        favorite_vehicles = user.favorite_vehicles.all()
+        return jsonify([{
+            'id': v.id,
+            'user_id': v.user_id,
+            'make': v.make,
+            'model': v.model,
+            'price': v.price,
+            'year': v.year,
+            'mileage': v.mileage,
+            'body_type': v.body_type,
+            'transmission': v.transmission,
+            'fuel_type': v.fuel_type,
+            'owners': v.owners,
+            'service_history': v.service_history,
+            'attention_grabber': v.attention_grabber,
+            'condition': v.condition,
+            'images': v.images,
+            'dealer_name': v.dealer_name,
+            'dealer_rating': v.dealer_rating,
+            'review_count': v.review_count,
+            'location': v.location,
+            'engine_size': v.engine_size,
+            'power': v.power,
+            'postcode': v.postcode,
+        } for v in favorite_vehicles])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@api.route("/favorites/<int:user_id>/<int:vehicle_id>", methods=['POST'])
+def add_favorite(user_id, vehicle_id):
+    try:
+        user = User.query.get(user_id)
+        vehicle = Vehicle.query.get(vehicle_id)
+
+        print(f"Found user: {user is not None}, Found vehicle: {vehicle is not None}")
+        
+        if not user or not vehicle:
+            return jsonify({'error': 'User or vehicle not found'}), 404
+            
+        if vehicle.user_id == user_id:
+            return jsonify({'error': 'Cannot favorite your own vehicle'}), 400
+        
+        if vehicle in user.favorite_vehicles:
+            return jsonify({
+                'success': True,
+                'message': 'Vehicle is already in favorites'
+            }), 200
+            
+        user.favorite_vehicles.append(vehicle)
+        db.session.commit()
+            
+        return jsonify({
+            'success': True,
+            'message': 'Vehicle added to favorites',
+            'vehicle': {
+                'id': vehicle.id,
+                'user_id': vehicle.user_id,
+                'make': vehicle.make,
+                'model': vehicle.model,
+                'price': vehicle.price,
+                'year': vehicle.year,
+                'mileage': vehicle.mileage,
+                'body_type': vehicle.body_type,
+                'transmission': vehicle.transmission,
+                'fuel_type': vehicle.fuel_type,
+                'owners': vehicle.owners,
+                'service_history': vehicle.service_history,
+                'attention_grabber': vehicle.attention_grabber,
+                'condition': vehicle.condition,
+                'images': vehicle.images,
+                'dealer_name': vehicle.dealer_name,
+                'dealer_rating': vehicle.dealer_rating,
+                'review_count': vehicle.review_count,
+                'location': vehicle.location,
+                'engine_size': vehicle.engine_size,
+                'power': vehicle.power,
+                'postcode': vehicle.postcode,
+            }
+        }), 200
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error adding favorite: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@api.route("/favorites/<int:user_id>/<int:vehicle_id>", methods=['DELETE'])
+def remove_favorite(user_id, vehicle_id):
+    try:
+        user = User.query.get(user_id)
+        vehicle = Vehicle.query.get(vehicle_id)
+        
+        if not user or not vehicle:
+            return jsonify({'error': 'User or vehicle not found'}), 404
+            
+        if vehicle in user.favorite_vehicles:
+            user.favorite_vehicles.remove(vehicle)
+            db.session.commit()
+            
+        return jsonify({
+            'success': True,
+            'message': 'Vehicle removed from favorites',
+            'vehicle': {
+                'id': vehicle.id,
+                'user_id': vehicle.user_id,
+                'make': vehicle.make,
+                'model': vehicle.model,
+                'price': vehicle.price,
+                'year': vehicle.year,
+                'mileage': vehicle.mileage,
+                'body_type': vehicle.body_type,
+                'transmission': vehicle.transmission,
+                'fuel_type': vehicle.fuel_type,
+                'owners': vehicle.owners,
+                'service_history': vehicle.service_history,
+                'attention_grabber': vehicle.attention_grabber,
+                'condition': vehicle.condition,
+                'images': vehicle.images,
+                'dealer_name': vehicle.dealer_name,
+                'dealer_rating': vehicle.dealer_rating,
+                'review_count': vehicle.review_count,
+                'location': vehicle.location,
+                'engine_size': vehicle.engine_size,
+                'power': vehicle.power,
+                'postcode': vehicle.postcode,
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400

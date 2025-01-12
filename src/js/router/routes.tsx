@@ -9,6 +9,7 @@ import FindCar from "@/views/FindCar";
 import Selling from "@/views/Selling";
 import Advert from "@/views/Advert";
 import CarDetails from "@/views/CarDetails";
+import Saved from "@/views/Saved";
 
 const Routes: RouteObject[] = [
     {
@@ -22,6 +23,10 @@ const Routes: RouteObject[] = [
     {
         path: RoutePaths.Account,
         element: <Account />,
+    },
+    {
+        path: RoutePaths.Saved,
+        element: <Saved />,
     },
     {
         path: RoutePaths.Selling,
