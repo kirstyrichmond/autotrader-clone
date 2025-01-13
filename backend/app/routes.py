@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from .models import Vehicle, User
+from .models import Chat, Vehicle, User, Message
 from . import db
 from app.utils import get_postcode_coordinates, calculate_distance
 from datetime import datetime, timezone
@@ -517,3 +517,185 @@ def remove_favorite(user_id, vehicle_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 400
+    
+# Chat Routes
+@api.route("/chats", methods=['GET'])
+def get_user_chats():
+    user_id = request.args.get('user_id', type=int)
+    chats = Chat.query.filter(
+        db.or_(Chat.buyer_id == user_id, Chat.seller_id == user_id)
+    ).order_by(Chat.last_message_at.desc()).all()
+    
+    return jsonify([{
+        'id': chat.id,
+        'listing': {
+            'id': chat.listing.id,
+            'make': chat.listing.make,
+            'model': chat.listing.model,
+            'images': chat.listing.images
+        },
+        'buyer': {
+            'id': chat.buyer.id,
+            'email': chat.buyer.email
+        },
+        'seller': {
+            'id': chat.seller.id,
+            'email': chat.seller.email
+        },
+        'last_message_at': chat.last_message_at.isoformat(),
+        'messages': [{
+            'id': msg.id,
+            'sender_id': msg.sender_id,
+            'content': msg.content,
+            'created_at': msg.created_at.isoformat(),
+            'read_at': msg.read_at.isoformat() if msg.read_at else None
+        } for msg in chat.messages]
+    } for chat in chats])
+
+@api.route("/chats", methods=['POST'])
+def create_chat():
+    try:
+        data = request.json
+        listing_id = data.get('listing_id')
+        buyer_id = data.get('buyer_id')
+        seller_id = data.get('seller_id')
+
+        # Check if chat already exists
+        existing_chat = Chat.query.filter_by(
+            listing_id=listing_id,
+            buyer_id=buyer_id,
+            seller_id=seller_id
+        ).first()
+
+        if existing_chat:
+            return jsonify({
+                'id': existing_chat.id,
+                'message': 'Chat already exists'
+            }), 200
+
+        # Create new chat
+        new_chat = Chat(
+            listing_id=listing_id,
+            buyer_id=buyer_id,
+            seller_id=seller_id,
+            created_at=datetime.now(tz=timezone.utc),
+            last_message_at=datetime.now(tz=timezone.utc)
+        )
+        
+        db.session.add(new_chat)
+        db.session.commit()
+
+        return jsonify({
+            'id': new_chat.id,
+            'message': 'Chat created successfully'
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating chat: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    
+@api.route("/chats/<int:chat_id>", methods=['GET'])
+def get_chat(chat_id):
+    chat = Chat.query.get(chat_id)
+    if not chat:
+        return jsonify({'error': 'Chat not found'}), 404
+        
+    return jsonify({
+        'id': chat.id,
+        'listing': {
+            'id': chat.listing.id,
+            'make': chat.listing.make,
+            'model': chat.listing.model,
+            'images': chat.listing.images
+        },
+        'buyer': {
+            'id': chat.buyer.id,
+            'email': chat.buyer.email
+        },
+        'seller': {
+            'id': chat.seller.id,
+            'email': chat.seller.email
+        },
+        'last_message_at': chat.last_message_at.isoformat(),
+        'messages': [{
+            'id': msg.id,
+            'sender_id': msg.sender_id,
+            'content': msg.content,
+            'created_at': msg.created_at.isoformat(),
+            'read_at': msg.read_at.isoformat() if msg.read_at else None
+        } for msg in chat.messages]
+    })
+
+@api.route("/chats/<int:chat_id>/messages", methods=['GET'])
+def get_chat_messages(chat_id):
+    messages = Message.query.filter_by(chat_id=chat_id).order_by(Message.created_at).all()
+    return jsonify([{
+        'id': msg.id,
+        'sender_id': msg.sender_id,
+        'content': msg.content,
+        'created_at': msg.created_at.isoformat(),
+        'read_at': msg.read_at.isoformat() if msg.read_at else None
+    } for msg in messages])
+
+@api.route("/chats/<int:chat_id>/messages", methods=['POST'])
+def send_message(chat_id):
+    data = request.json
+    message = Message(
+        chat_id=chat_id,
+        sender_id=data['sender_id'],
+        content=data['content']
+    )
+    db.session.add(message)
+    
+    # Update chat's last_message_at
+    chat = Chat.query.get(chat_id)
+    chat.last_message_at = datetime.now(tz=timezone.utc)
+    
+    db.session.commit()
+    return jsonify({
+        'id': message.id,
+        'sender_id': message.sender_id,
+        'content': message.content,
+        'created_at': message.created_at.isoformat()
+    })
+
+# Notificaion Routes
+@api.route("/messages/unread-count/<int:user_id>", methods=['GET'])
+def get_unread_count(user_id):
+    try:
+        # Count unread messages where user is recipient
+        unread_count = Message.query.join(Chat).filter(
+            db.or_(
+                db.and_(Chat.buyer_id == user_id, Message.sender_id != user_id),
+                db.and_(Chat.seller_id == user_id, Message.sender_id != user_id)
+            ),
+            Message.read_at.is_(None)
+        ).count()
+        
+        return jsonify({'unread_count': unread_count})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@api.route("/messages/mark-read", methods=['POST'])
+def mark_messages_read():
+    try:
+        data = request.json
+        chat_id = data.get('chat_id')
+        user_id = data.get('user_id')
+        
+        # Mark all messages in chat as read for this user
+        messages = Message.query.filter(
+            Message.chat_id == chat_id,
+            Message.sender_id != user_id,
+            Message.read_at.is_(None)
+        ).all()
+        
+        now = datetime.now(tz=timezone.utc)
+        for message in messages:
+            message.read_at = now
+            
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

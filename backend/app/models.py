@@ -68,6 +68,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
+    unread_message_count = db.Column(db.Integer, default=0)
 
     favorite_vehicles = db.relationship(
         'Vehicle',
@@ -83,3 +84,27 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"<email {self.email}>"
+    
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    listing_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'))
+    buyer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
+    last_message_at = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
+
+    # Relationships
+    listing = db.relationship('Vehicle', backref='chats')
+    buyer = db.relationship('User', foreign_keys=[buyer_id])
+    seller = db.relationship('User', foreign_keys=[seller_id])
+    messages = db.relationship('Message', backref='chat', lazy='dynamic')
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.Integer, db.ForeignKey('chat.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(tz=timezone.utc))
+    read_at = db.Column(db.DateTime)
+    
+    sender = db.relationship('User')

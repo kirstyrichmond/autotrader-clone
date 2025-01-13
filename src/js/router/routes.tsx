@@ -10,6 +10,7 @@ import Selling from "@/views/Selling";
 import Advert from "@/views/Advert";
 import CarDetails from "@/views/CarDetails";
 import Saved from "@/views/Saved";
+import Chat from "@/views/Chat";
 
 const Routes: RouteObject[] = [
     {
@@ -66,6 +67,22 @@ const Routes: RouteObject[] = [
         path: RoutePaths.Details,
         element: <CarDetails />,
     },
+    {
+        path: RoutePaths.Chats,
+        element: (
+            <ProtectedRoute>
+                <Chat />
+            </ProtectedRoute>
+        )
+      },
+      {
+        path: RoutePaths.Chat,
+        element: (
+            <ProtectedRoute>
+                <Chat />
+            </ProtectedRoute>
+        )
+      }
 ];
 
 export default Routes;

@@ -5,6 +5,8 @@ export enum RoutePaths {
   Search = "/car-search",
   Details = "/car-details/:id",
   Selling = "/selling",
+  Chat = "/chats/:chatId",
+  Chats = "/chats",
   Edit = "edit/:id",
   FindCar = "find-car",
   Advert = "advert",

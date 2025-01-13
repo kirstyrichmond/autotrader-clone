@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegHeart as SavedIcon } from "react-icons/fa";
 import { CgProfile as ProfileIcon } from "react-icons/cg";
 import Logo from "../../../assets/images/logo.png";
 import MenuNav from "./MenuNav";
 import AuthModal from "../Auth/AuthModal";
-import { useSelector } from "react-redux";
-import { RootState } from "src/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "src/store";
 import { useNavigate } from "react-router-dom";
+import { Mail } from 'lucide-react';
+import { fetchUnreadCount } from "../../../store/slices/chatSlice";
 
 const Nav: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const userId = useSelector((state: RootState) => state.auth.user?.id);
+    const unreadCount = useSelector((state: RootState) => state.chat.unreadCount);
     const navigate = useNavigate();
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -29,6 +34,26 @@ const Nav: React.FC = () => {
         }
     }
 
+    const handleMessagesClick = () => {
+        if (isLoggedIn) {
+            navigate('/chats');
+        } else {
+            setIsAuthModalOpen(true);
+        }
+    }
+
+    useEffect(() => {
+        if (userId) {
+          const fetchCount = () => {
+            dispatch(fetchUnreadCount(userId));
+          };
+          
+          fetchCount();
+          const interval = setInterval(fetchCount, 30000);
+          return () => clearInterval(interval);
+        }
+    }, [unreadCount, userId]);
+
     return (
       <><div className="flex py-1 justify-between items-center w-full">
             <div onClick={() => navigate('/')} className="cursor-pointer">
@@ -39,6 +64,15 @@ const Nav: React.FC = () => {
                 <button onClick={handleSavedClick} className="text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
                     <SavedIcon height={16} />
                     <p className="text-[12px]">Saved</p>
+                </button>
+                <button onClick={handleMessagesClick} className="relative text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
+                    <Mail height={16} />
+                    {unreadCount > 0 && (
+                        <div className="absolute top-0 right-6 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
+                        {unreadCount}
+                        </div>
+                    )}
+                    <p className="text-[12px]">Messages</p>
                 </button>
                 <button onClick={handleAccountClick} className="text-gray-800 gap-1 flex flex-col items-center cursor-pointer bg-transparent">
                     <ProfileIcon height={16} />

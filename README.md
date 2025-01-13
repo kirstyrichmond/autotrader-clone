@@ -19,6 +19,9 @@ Currently in the project you can:
 - Create a vehicle listing: including uploading images and retrieving basic vehicle information for registration provided
 - View all vehicle listings on your account page
 - Edit/delete vehicle listings
+- Save vehicle
+- Message seller
+
 
 
 Future implementations:
@@ -26,8 +29,6 @@ Future implementations:
 - Project filter for vehicle type (cars, vans, bikes, motorhomes, trucks etc.)
 - Create loading spinner for initial page load
 - Auto scroll to first error in form
-- Save vehicle
-- Contact seller (message, phone number etc.)
 - Vehicle valuation
 - Track vehicle listing views
 

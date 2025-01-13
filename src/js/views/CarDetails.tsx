@@ -9,6 +9,7 @@ import { IoLocationSharp as LocationIcon } from "react-icons/io5";
 import GalleryModal from '@/components/GalleryModal';
 import { Vehicle } from '@/components/ResultItem';
 import { addFavorite, fetchFavorites, removeFavorite } from '../../store/slices/favoritesSlice';
+import { createChat } from '../../store/slices/chatSlice';
 
 const CarDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,6 +50,24 @@ const CarDetails = () => {
       }
     } catch (error) {
       console.error('Favorite action failed:', error);
+    }
+  };
+
+  const startChat = async () => {
+    if (!userId || !vehicle) {
+      return;
+    }
+  
+    try {
+      const result = await dispatch(createChat({
+        listing_id: vehicle.id,
+        buyer_id: userId,
+        seller_id: vehicle.user_id
+      })).unwrap();
+      
+      navigate(`/chats/${result.id}`);
+    } catch (error) {
+      console.error('Failed to start chat:', error);
     }
   };
 
@@ -211,7 +230,11 @@ const CarDetails = () => {
             <div className="">
               <div className="text-lg font-semibold mb-4">{vehicle.attention_grabber}</div>
               <div className="text-4xl font-bold">£{vehicle.price}</div>
-              <button className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg mt-6 hover:bg-blue-700">
+              <button 
+                onClick={startChat}
+                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg mt-6 hover:bg-blue-700"
+                disabled={vehicle.user_id === userId}
+              >
                 Message seller
               </button>
             </div>
