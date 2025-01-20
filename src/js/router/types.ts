@@ -2,7 +2,7 @@ export enum RoutePaths {
   LandingPage = "/",
   Account = "/secure/my-autotrader",
   Saved = "/secure/saved-adverts",
-  Search = "/car-search",
+  Search = "/search",
   Details = "/car-details/:id",
   Selling = "/selling",
   Chat = "/chats/:chatId",

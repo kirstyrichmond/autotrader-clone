@@ -321,32 +321,60 @@ def update_vehicle(vehicle_id):
 def search_vehicles():
     postcode = request.args.get('postcode')
     radius = request.args.get('radius', type=int, default=50)
+    make = request.args.get('make')
+    model = request.args.get('model')
+    min_price = request.args.get('minPrice', type=float)
+    max_price = request.args.get('maxPrice', type=float)
+    min_year = request.args.get('minYear', type=int)
+    max_year = request.args.get('maxYear', type=int)
+    min_mileage = request.args.get('minMileage', type=int)
+    max_mileage = request.args.get('maxMileage', type=int)
+    transmission = request.args.get('transmission')
+    fuel_type = request.args.get('fuelType')
+    body_type = request.args.get('bodyType')
+    page = request.args.get('page', type=int, default=1)
+    per_page = request.args.get('perPage', type=int, default=20)
     
-    print(f"Searching with postcode: {postcode}, radius: {radius}")
+    query = Vehicle.query.filter_by(status='active')
     
-    # Only get active listings
-    all_vehicles = Vehicle.query.filter_by(status='active').all()
-    print(f"Total vehicles in database: {len(all_vehicles)}")
+    if make:
+        query = query.filter(Vehicle.make.ilike(f'%{make}%'))
+    if model:
+        query = query.filter(Vehicle.model.ilike(f'%{model}%'))
+    if min_price:
+        query = query.filter(Vehicle.price >= min_price)
+    if max_price:
+        query = query.filter(Vehicle.price <= max_price)
+    if min_year:
+        query = query.filter(Vehicle.year >= min_year)
+    if max_year:
+        query = query.filter(Vehicle.year <= max_year)
+    if min_mileage:
+        query = query.filter(Vehicle.mileage >= min_mileage)
+    if max_mileage:
+        query = query.filter(Vehicle.mileage <= max_mileage)
+    if transmission:
+        query = query.filter(Vehicle.transmission == transmission)
+    if fuel_type:
+        query = query.filter(Vehicle.fuel_type == fuel_type)
+    if body_type:
+        query = query.filter(Vehicle.body_type == body_type)
     
     if postcode:
         coords = get_postcode_coordinates(postcode)
-        print(f"Coordinates for {postcode}: {coords}")
-        
         if not coords:
             return jsonify({'error': 'Invalid postcode'}), 400
             
         user_lat, user_lon, user_location = coords
+        
+        vehicles = query.all()
         results = []
         
-        for vehicle in all_vehicles:
-            print(f"Checking vehicle: {vehicle.make} {vehicle.model}")
-            print(f"Vehicle coords: {vehicle.latitude}, {vehicle.longitude}")
-            
+        for vehicle in vehicles:
             distance = calculate_distance(
                 user_lat, user_lon,
                 vehicle.latitude, vehicle.longitude
             )
-            print(f"Distance to vehicle: {distance} miles")
             
             if distance <= radius:
                 results.append({
@@ -372,14 +400,60 @@ def search_vehicles():
                     'engine_size': vehicle.engine_size,
                     'power': vehicle.power,
                     'postcode': vehicle.postcode,
-                    'distance': distance
+                    'distance': round(distance, 1)
                 })
-    
+        
+        # Sort results by distance
+        results.sort(key=lambda x: x['distance'])
+        
+        # Implement pagination
+        start = (page - 1) * per_page
+        end = start + per_page
+        paginated_results = results[start:end]
+        
         return jsonify({
-            'vehicles': results,
-            'total': len(results)
+            'vehicles': paginated_results,
+            'total': len(results),
+            'page': page,
+            'per_page': per_page,
+            'total_pages': (len(results) + per_page - 1) // per_page
         })
     
+    # If no postcode, just return paginated results
+    total = query.count()
+    vehicles = query.paginate(page=page, per_page=per_page)
+    
+    return jsonify({
+        'vehicles': [{
+            'id': v.id,
+            'user_id': v.user_id,
+            'make': v.make,
+            'model': v.model,
+            'price': v.price,
+            'year': v.year,
+            'body_type': v.body_type,
+            'mileage': v.mileage,
+            'transmission': v.transmission,
+            'fuel_type': v.fuel_type,
+            'owners': v.owners,
+            'service_history': v.service_history,
+            'attention_grabber': v.attention_grabber,
+            'condition': v.condition,
+            'images': v.images,
+            'dealer_name': v.dealer_name,
+            'dealer_rating': v.dealer_rating,
+            'review_count': v.review_count,
+            'location': v.location,
+            'engine_size': v.engine_size,
+            'power': v.power,
+            'postcode': v.postcode,
+        } for v in vehicles.items],
+        'total': total,
+        'page': page,
+        'per_page': per_page,
+        'total_pages': (total + per_page - 1) // per_page
+    })
+
 # Favorites Routes
 @api.route("/favorites/<int:user_id>", methods=['GET'])
 def get_favorites(user_id):

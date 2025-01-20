@@ -1,9 +1,9 @@
 import React from "react";
-import { FaRegHeart as SavedIcon } from "react-icons/fa";
-import { IoMdCamera as CameraIcon } from "react-icons/io";
-import { IoLocationSharp as LocationIcon } from "react-icons/io5";
-import { AiFillStar as StarIcon } from "react-icons/ai";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { addFavorite, removeFavorite } from "../../store/slices/favoritesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
 
 export interface Vehicle {
   id: number;
@@ -14,20 +14,11 @@ export interface Vehicle {
   year: string;
   body_type: string;
   mileage: string;
-  power: string;
+  engine_size?: string;
   transmission: string;
   fuel_type: string;
-  owners?: number;
-  service_history?: string;
-  condition?: string;
-  dealer_name?: string;
-  dealer_rating?: number;
-  review_count?: number;
-  location: string;
-  latitude: number;
-  longitude: number;
-  engine_size?: string;
   attention_grabber?: string;
+  location: string;
   distance?: number;
 }
 
@@ -37,6 +28,7 @@ export interface ResultItemProps {
 
 const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
   const {
+    id,
     images,
     make,
     model,
@@ -44,146 +36,124 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
     year,
     body_type,
     mileage,
-    transmission,
-    fuel_type,
-    owners,
-    service_history,
-    condition,
-    dealer_name,
-    dealer_rating,
-    review_count,
-    location,
-    distance,
     engine_size,
-    power,
     attention_grabber,
+    location,
+    distance
   } = vehicle;
 
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const userId = useSelector((state: RootState) => state.auth.user?.id);
+  const favorites = useSelector((state: RootState) => state.favorites.favorites);
+  const isFavorite = favorites.some((favorite) => favorite.id === vehicle?.id);
   
   const parsedImages = images ? (
     typeof images === 'string' ? JSON.parse(images) : images
   ) : [];
 
   const getImageUrl = (vehicle: Vehicle) => {
-    if (vehicle.images?.[0]) {
-      // If the image starts with data:image, it's a Base64 string
-      if (vehicle.images[0].url?.startsWith('data:image')) {
-        return vehicle.images[0].url;
+    if (parsedImages[0]) {
+      if (parsedImages[0].url?.startsWith('data:image')) {
+        return parsedImages[0].url;
       }
-      // Otherwise use the preview or URL
-      return vehicle.images[0].preview || vehicle.images[0].url;
+      return parsedImages[0].preview || parsedImages[0].url;
     }
     return '';
   };
 
   const handleClick = () => {
-    navigate(`/car-details/${vehicle.id}`);
+    navigate(`/car-details/${id}`);
   };
 
-  const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Add save functionality here
-  };
+    const handleFavoriteClick = async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      
+      if (!userId) {
+        console.log('No user ID found');
+        return;
+      }
+      
+      if (!vehicle?.id) {
+        console.log('No vehicle ID found');
+        return;
+      }
+    
+      try {
+        if (isFavorite) {
+          await dispatch(removeFavorite({ 
+            userId, 
+            vehicleId: vehicle.id 
+          })).unwrap();
+        } else {        
+          await dispatch(addFavorite({ 
+            userId, 
+            vehicleId: vehicle.id 
+          })).unwrap();
+        }
+      } catch (error) {
+        console.error('Favorite action failed:', error);
+      }
+    };
 
   return (
     <div 
       onClick={handleClick}
-      className="flex flex-col md:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer relative"
     >
-      {/* Left side - Image gallery */}
-      <div className="relative w-full md:w-2/5">
+      {/* Favorite button */}
+      <button 
+        onClick={handleFavoriteClick}
+        className="absolute top-2 right-2 z-10 bg-gray-100 rounded-full p-1 shadow-md transition-colors hover:border-gray-100"
+      >
+        <Heart className="w-3 h-3 text-red-600 hover:text-black" />
+      </button>
+
+      {/* Image */}
+      <div className="aspect-[4/3] relative">
         {getImageUrl(vehicle) ? (
           <img
             src={getImageUrl(vehicle)}
             alt={`${make} ${model}`}
-            className="w-full h-96 object-cover"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-96 bg-gray-200 flex items-center justify-center">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <p className="text-gray-500">No image available</p>
           </div>
         )}
-        <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-          <span className="flex items-center gap-1">
-            <CameraIcon className="w-4 h-4" />
-            {parsedImages.length}
-          </span>
-        </div>
       </div>
 
-      {/* Right side - Vehicle details */}
-      <div className="w-full md:w-3/5 p-4">
-        {/* Top section */}
-        <div className="flex justify-between items-start mb-2">
-          {condition && (
-            <span className="bg-orange-400 text-white px-3 py-1 rounded-md text-sm font-medium">
-              {condition}
-            </span>
-          )}
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold">£{price}</span>
-            <div 
-              onClick={handleSave}
-              className="flex items-center gap-1 text-blue-600 hover:text-blue-800 cursor-pointer"
-            >
-              <SavedIcon className="text-lg" />
-              <span className="text-sm">Save</span>
-            </div>
+      {/* Content */}
+      <div className="p-3">
+        {/* Title */}
+        <h2 className="font-semibold text-sm">{make} {model}</h2>
+        <p className="text-xs text-gray-600">{engine_size} {body_type}</p>
+        
+        {/* Info */}
+        {attention_grabber && (
+          <p className="text-xs text-gray-700 mt-1">{attention_grabber}</p>
+        )}
+
+        {/* Specs */}
+        <div className="flex gap-1 mt-2 text-xs text-gray-600">
+          <div className="bg-gray-100 px-2 py-0.5 rounded">
+            {year} ({year.slice(-2)} reg)
+          </div>
+          <div className="bg-gray-100 px-2 py-0.5 rounded">
+            {typeof mileage === 'number' ? mileage.toLocaleString() : mileage} miles
           </div>
         </div>
 
-        {/* Vehicle title and subtitle */}
-        <h2 className="text-lg font-medium text-blue-600">{make} {model}</h2>
-        { attention_grabber && <p className="text-gray-800 mb-3">{attention_grabber}</p>}
-
-        {/* Vehicle specifications */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-gray-800 text-sm mb-4 font-bold">
-          <span>{year}</span>
-          <span>|</span>
-          <span>{body_type}</span>
-          <span>|</span>
-          <span>{mileage} miles</span>
-          <span>|</span>
-          <span>{engine_size}</span>
-          <span>|</span>
-          <span>{power}</span>
-          <span>|</span>
-          <span>{transmission}</span>
-          <span>|</span>
-          <span>{fuel_type}</span>
-          <span>|</span>
-          <span>{owners} owners</span>
-          {service_history && (
-            <>
-              <span>|</span>
-              <span>Full service history</span>
-            </>
-          )}
-        </div>
-
-        {/* Dealer information */}
-        <div className="flex items-center justify-between mt-auto">
-          <div>
-            {dealer_name && 
-              <div className="text-blue-600">
-                {dealer_name} - See all 6 cars
-              </div>
-            }
-            <div className="flex items-center gap-2 text-sm">
-              {dealer_rating !== undefined && dealer_rating > 0 && 
-                <div className="flex items-center gap-1">
-                  <StarIcon className="text-blue-600" />
-                  <span>{dealer_rating}</span>
-                  <span className="text-blue-600">({review_count} reviews)</span>
-                </div>
-              }
-              <div className="flex items-center gap-1 text-gray-600">
-                <LocationIcon />
-                <span>{location}</span>
-                {distance !== undefined && <span>({distance} miles)</span>}
-              </div>
-            </div>
+        {/* Location and Price */}
+        <div className="mt-3 flex flex-col">
+          <div className="flex items-start gap-1 mb-1">
+            <span className="text-lg font-bold">£{price.toLocaleString()}</span>
+          </div>
+          <div className="text-xs text-gray-600">
+            {location}
+            {distance !== undefined && <span> ({distance} miles)</span>}
           </div>
         </div>
       </div>

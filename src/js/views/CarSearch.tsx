@@ -1,4 +1,4 @@
-import FilterBox from "@/components/FilterBox";
+import FilterBox from "@/components/Filter/Filter";
 import { Vehicle } from "@/components/ResultItem";
 import Results from "@/components/Results";
 import React, { useState } from "react";

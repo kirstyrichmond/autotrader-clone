@@ -1,18 +1,51 @@
-import { SearchParams } from "@/components/VehicleSearchForm";
+import { Vehicle } from "@/components/ResultItem";
+
+interface SearchFilters {
+  postcode?: string;
+  radius?: number;
+  make?: string;
+  model?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minYear?: number;
+  maxYear?: number;
+  minMileage?: number;
+  maxMileage?: number;
+  transmission?: string;
+  fuelType?: string[];
+  bodyType?: string;
+  page?: number;
+  perPage?: number;
+}
+
+interface SearchResponse {
+  vehicles: Vehicle[];
+  total: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
+}
 
 const API_URL = "http://localhost:5000/api";
 
-const searchVehicles = async (params: SearchParams) => {
-  const queryParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value) queryParams.append(key, value.toString());
+const searchVehicles = async (filters: SearchFilters): Promise<SearchResponse> => {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') {
+      params.append(key, value.toString());
+    }
   });
 
-  const response = await fetch(`${API_URL}/vehicles/search?${queryParams}`);
-  if (!response.ok) {
-    throw new Error("Search failed");
+  try {
+    const response = await fetch(`${API_URL}/vehicles/search?${params.toString()}`);
+    if (!response.ok) {
+      throw new Error('Search failed');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error searching vehicles:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export default searchVehicles;

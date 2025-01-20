@@ -1,4 +1,4 @@
-import FilterBox from "@/components/FilterBox";
+import FilterBox from "@/components/Filter/Filter";
 import Results from "@/components/Results";
 import dayjs from "dayjs";
 import React, { useState } from "react";

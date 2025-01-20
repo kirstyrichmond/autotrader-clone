@@ -3,14 +3,12 @@ import ResultItem, { Vehicle } from './ResultItem';
 
 const Results: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
   return (
-    <div className="space-y-4">
-      <ul>
+    <div className="mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {vehicles.map((vehicle: Vehicle) => (
-          <li className='my-8' key={vehicle.id}>
-            <ResultItem vehicle={vehicle} />
-          </li>
+          <ResultItem key={vehicle.id} vehicle={vehicle} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

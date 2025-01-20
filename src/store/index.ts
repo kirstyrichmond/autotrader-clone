@@ -1,16 +1,16 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import advertReducer from './slices/advertSlice';
-import vehicleReducer from './slices/listingsSlice';
 import favoritesReducer from './slices/favoritesSlice';
+import vehiclesReducer from './slices/vehiclesSlice';
 import chatReducer from './slices/chatSlice';
 import { persistReducer } from 'redux-persist';
 import { persistStore } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // Use localStorage instead of sessionStorage
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
   key: 'root',
-  storage, // This now uses localStorage
+  storage,
   whitelist: ['auth', 'advert', 'vehicles'],
   debug: true
 };
@@ -18,9 +18,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   advert: advertReducer,
-  vehicles: vehicleReducer,
   favorites: favoritesReducer,
   chat: chatReducer,
+  vehicles: vehiclesReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

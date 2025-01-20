@@ -11,6 +11,7 @@ import Advert from "@/views/Advert";
 import CarDetails from "@/views/CarDetails";
 import Saved from "@/views/Saved";
 import Chat from "@/views/Chat";
+import SearchResults from "@/views/SearchResults";
 
 const Routes: RouteObject[] = [
     {
@@ -19,7 +20,7 @@ const Routes: RouteObject[] = [
     },
     {
         path: RoutePaths.Search,
-        element: <CarSearch />,
+        element: <SearchResults />,
     },
     {
         path: RoutePaths.Account,
