@@ -13,7 +13,7 @@ export interface Vehicle {
   model: string;
   year: string;
   body_type: string;
-  mileage: string;
+  mileage: string | number;
   engine_size?: string;
   transmission: string;
   fuel_type: string;

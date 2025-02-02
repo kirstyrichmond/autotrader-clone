@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import advertReducer from './slices/advertSlice';
 import favoritesReducer from './slices/favoritesSlice';
 import vehiclesReducer from './slices/vehiclesSlice';
+import listingsReducer from './slices/listingsSlice';
 import chatReducer from './slices/chatSlice';
 import { persistReducer } from 'redux-persist';
 import { persistStore } from 'redux-persist';
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   advert: advertReducer,
   favorites: favoritesReducer,
   chat: chatReducer,
-  vehicles: vehiclesReducer
+  vehicles: vehiclesReducer,
+  listings: listingsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

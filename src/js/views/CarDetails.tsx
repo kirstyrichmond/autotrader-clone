@@ -15,7 +15,7 @@ const CarDetails = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { currentListing: vehicle, loading, error } = useSelector((state: RootState) => state.vehicles);
+  const { currentListing: vehicle, loading, error } = useSelector((state: RootState) => state.listings);
   const userId = useSelector((state: RootState) => state.auth.user?.id);
   const favorites = useSelector((state: RootState) => state.favorites.favorites);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);

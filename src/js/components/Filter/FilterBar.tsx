@@ -6,7 +6,7 @@ import { FilterState } from '../../../store/slices/vehiclesSlice';
 interface FilterBarProps {
   filters: FilterState;
   onOpenFilters: () => void;
-  onRemoveFilter: (key: string) => void;
+  onRemoveFilter: (key: keyof FilterState) => void;
   onClearAll: () => void;
   totalResults?: number;
 }
@@ -52,7 +52,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {activeFilters.map(([key, value]) => (
             <button
               key={key}
-              onClick={() => onRemoveFilter(key)}
+              onClick={() => onRemoveFilter(key as keyof FilterState)}
               className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100"
             >
               {getFilterLabel(key, value)}
