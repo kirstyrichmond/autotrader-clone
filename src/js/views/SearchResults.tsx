@@ -52,9 +52,9 @@ const SearchResults = () => {
       if (key === 'fuelTypes') {
         baseFilters.fuelTypes = value ? value.split(',') : [];
       } else if (['minPrice', 'maxPrice', 'minYear', 'maxYear', 'minMileage', 'maxMileage', 'radius', 'page', 'perPage'].includes(key)) {
-        baseFilters[key] = value ? Number(value) : undefined;
+        (baseFilters as any)[key] = value ? Number(value) : undefined;
       } else {
-        baseFilters[key] = value || undefined;
+        (baseFilters as any)[key] = value || undefined;
       }
     });
 
@@ -66,12 +66,12 @@ const SearchResults = () => {
     }
   }, [searchParams, dispatch]);
 
-  const handleRemoveFilter = (key: string) => {
+  const handleRemoveFilter = (key: keyof FilterState) => {
     const newFilters = { ...filters };
     if (key === 'fuelTypes') {
       newFilters.fuelTypes = [];
     } else {
-      newFilters[key] = undefined;
+      (newFilters as any)[key] = undefined;
     }
     
     const params = new URLSearchParams(searchParams);
