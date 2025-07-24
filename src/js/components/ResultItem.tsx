@@ -106,9 +106,9 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
     >
       <button 
         onClick={handleFavoriteClick}
-        className="absolute top-2 right-2 z-10 bg-gray-100 rounded-full p-1 shadow-md transition-colors hover:border-gray-100"
+        className={`${isFavorite ? 'text-red-500' : 'text-gray-600'} hover:text-red-500 absolute top-2 right-2 z-10 rounded-full p-1`}
       >
-        <Heart className="w-3 h-3 text-red-600 hover:text-black" />
+        <Heart className="w-3 h-3" fill={isFavorite ? 'currentColor' : 'none'} />
       </button>
       <div className="aspect-[4/3] relative">
         {getImageUrl(vehicle) ? (

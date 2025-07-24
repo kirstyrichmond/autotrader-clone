@@ -29,7 +29,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       transition
     >
       <div className="fixed inset-0 bg-gray-500/75 transition-opacity duration-300 ease-out data-[closed]:opacity-0" />
-
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -44,7 +43,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <Close className="h-6 w-6" />
                   </button>
                 </div>
-
                 <div className="relative flex-1 px-4 sm:px-6">
                   <div className="space-y-6">
                     { isLogin ? (
@@ -52,14 +50,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     ) : (
                       <Register setIsLogIn={setIsLogin} />
                     )}
-
                     <div className="flex items-center">
                       <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 rounded border-gray-300 text-blue-600" />
                       <label htmlFor="remember-me" className="ml-2 text-sm text-gray-600">
                         Remember me on this device
                       </label>
                     </div>
-
                     <p className="text-xs text-gray-500">
                       By continuing, you agree to the{" "}
                       <a href="#" className="text-blue-600 hover:underline">

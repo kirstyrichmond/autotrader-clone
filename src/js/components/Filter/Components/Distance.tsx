@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { useFilters } from '@/hooks/useFilters';
 import { searchFiltersSchema } from '../../../schemas';
 
-const Distance = () => {
+interface DistanceProps {
+  immediateFilter?: boolean;
+}
+
+const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
   const { 
     filters,
     localFilters, 
-    handleFilterChange,
-    handleFilterChangeOnly
+    handleFilterChangeOnly,
+    handleImmediateFilterChange
   } = useFilters();
 
   const [postcodeError, setPostcodeError] = useState<string | null>(null);
@@ -68,7 +72,10 @@ const Distance = () => {
         </label>
         <select
           value={filters?.radius || 50}
-          onChange={(e) => handleFilterChange('radius', Number(e.target.value))}
+          onChange={(e) => immediateFilter 
+            ? handleImmediateFilterChange('radius', Number(e.target.value))
+            : handleFilterChangeOnly('radius', Number(e.target.value))
+          }
           className="
             w-full p-3 sm:p-2 border border-gray-300 rounded-lg text-base sm:text-sm
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
