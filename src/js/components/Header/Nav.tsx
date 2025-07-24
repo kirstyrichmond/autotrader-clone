@@ -113,7 +113,7 @@ const Nav: React.FC = () => {
                 </div>
                 <button 
                     onClick={toggleMobileMenu}
-                    className="md:hidden text-gray-800 p-2 hover:bg-gray-100 rounded-md transition-colors"
+                    className="md:hidden text-gray-800 p-2 bg-white rounded-md transition-colors"
                     aria-label="Toggle menu"
                 >
                     <HiOutlineMenu size={24} />
@@ -133,7 +133,7 @@ const Nav: React.FC = () => {
                                     <button
                                         key={index}
                                         onClick={() => handleMenuItemClick(item)}
-                                        className="w-full text-left px-4 py-3 text-gray-800 hover:bg-gray-50 transition-colors"
+                                        className="w-full text-left px-4 py-3 text-gray-800 bg-white hover:bg-gray-50 transition-colors"
                                     >
                                         {item.name}
                                     </button>
@@ -143,14 +143,14 @@ const Nav: React.FC = () => {
                                 </div>
                                 <button 
                                     onClick={handleSavedClick} 
-                                    className="w-full text-left px-4 py-3 text-gray-800 hover:bg-gray-50 transition-colors flex items-center gap-3"
+                                    className="w-full text-left px-4 py-3 text-gray-800 bg-white hover:bg-gray-50 transition-colors flex items-center gap-3"
                                 >
                                     <SavedIcon height={16} />
                                     <span>Saved</span>
                                 </button>
                                 <button 
                                     onClick={handleMessagesClick} 
-                                    className="w-full text-left px-4 py-3 text-gray-800 hover:bg-gray-50 transition-colors flex items-center gap-3"
+                                    className="w-full text-left px-4 py-3 text-gray-800 bg-white hover:bg-gray-50 transition-colors flex items-center gap-3"
                                 >
                                     <Mail height={16} />
                                     <span>Messages</span>
@@ -162,7 +162,7 @@ const Nav: React.FC = () => {
                                 </button>
                                 <button 
                                     onClick={handleAccountClick} 
-                                    className="w-full text-left px-4 py-3 text-gray-800 hover:bg-gray-50 transition-colors flex items-center gap-3"
+                                    className="w-full text-left px-4 py-3 text-gray-800 bg-white hover:bg-gray-50 transition-colors flex items-center gap-3"
                                 >
                                     <ProfileIcon height={16} />
                                     <span>Account</span>

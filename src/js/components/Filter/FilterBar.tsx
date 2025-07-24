@@ -62,7 +62,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
           <button
             onClick={onOpenFilters}
-            className="flex items-center gap-2 px-3 py-1 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50"
+            className="flex items-center gap-2 px-3 py-1 border bg-white border-blue-600 text-blue-600 rounded-full hover:bg-blue-50"
           >
             <Plus size={14} />
             Add filter
@@ -71,7 +71,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {activeFilters.length > 0 && (
             <button
               onClick={onClearAll}
-              className="ml-auto text-blue-600 hover:underline"
+              className="ml-auto text-blue-600 hover:underline bg-gray-50"
             >
               Clear all
             </button>
