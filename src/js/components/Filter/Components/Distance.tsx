@@ -39,31 +39,46 @@ const Distance = () => {
   };
 
   return (
-    <div className="">
-      <div className="mb-2">
-        <label className="mb-2">Postcode</label>
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Postcode or Location
+        </label>
         <input
           type="text"
           placeholder="Enter postcode (e.g., M1 1AA)"
           value={filters?.postcode || ''}
           onChange={(e) => handlePostcodeChange(e.target.value)}
           onBlur={(e) => handlePostcodeBlur(e.target.value)}
-          className={`w-full p-2 border rounded focus:outline-none focus:ring-2 ${
-            postcodeError 
-              ? 'border-red-500 focus:ring-red-500' 
-              : 'focus:ring-blue-500'
-          }`}
+          className={`
+            w-full p-3 sm:p-2 border rounded-lg text-base sm:text-sm
+            focus:outline-none focus:ring-2 transition-colors
+            min-h-[48px] sm:min-h-[auto] touch-manipulation
+            ${postcodeError 
+              ? 'border-red-500 focus:ring-red-500 bg-red-50' 
+              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+            }
+          `}
         />
         {postcodeError && (
-          <p className="mt-1 text-sm text-red-600">{postcodeError}</p>
+          <p className="mt-2 text-sm text-red-600 flex items-start">
+            <span className="inline-block w-1 h-1 bg-red-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+            {postcodeError}
+          </p>
         )}
       </div>
       <div>
-        <label className="pb-2">Distance</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Search Distance
+        </label>
         <select
           value={filters?.radius || 50}
           onChange={(e) => handleFilterChange('radius', Number(e.target.value))}
-          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="
+            w-full p-3 sm:p-2 border border-gray-300 rounded-lg text-base sm:text-sm
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            min-h-[48px] sm:min-h-[auto] touch-manipulation bg-white
+          "
         >
           <option value={500}>National</option>
           <option value={5}>Within 5 miles</option>

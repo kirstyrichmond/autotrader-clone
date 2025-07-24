@@ -136,7 +136,7 @@ export default function FindCar() {
     return (
         // @ts-ignore
       <Form>
-      <div className={`max-w-[1272px] flex flex-col my-16 mx-32 gap-4 ${regSubmitted && 'items-center' }`}>
+      <div className={`flex flex-col my-16 mx-32 gap-4 ${regSubmitted && 'items-center' }`}>
           <h1 className="text-2xl font-semibold mb-4">Find Your Car</h1>
           { regSubmitted ? (
           <><div className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow">
