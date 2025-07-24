@@ -1,14 +1,20 @@
 export const getApiUrl = (): string => {
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL.replace(/\/$/, '');
+    const envUrl = import.meta.env.VITE_API_URL.replace(/\/$/, '');
+    console.log('Using VITE_API_URL:', envUrl);
+    return envUrl;
   }
 
   const hostname = window.location.hostname;
   
   if (hostname.includes('vercel.app')) {
-    return 'https://autotrader-clone.onrender.com/api';
+    const prodUrl = 'https://autotrader-clone.onrender.com/api';
+    console.log('Using production URL:', prodUrl);
+    return prodUrl;
   } else {
-    return 'http://localhost:5000/api';
+    const devUrl = 'http://localhost:5000/api';
+    console.log('Using development URL:', devUrl);
+    return devUrl;
   }
 };
 
