@@ -10,9 +10,10 @@ interface InputProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     meta: FormMeta;
     description?: string;
+    autoComplete?: string;
 }
 
-const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, value, onChange, meta, description }) => {
+const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, value, onChange, meta, description, autoComplete }) => {
     return (
         <div className="mb-2">
             <div className="mb-2">
@@ -25,10 +26,11 @@ const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, 
                     placeholder={placeholder}
                     value={value ?? ""}
                     onChange={(e) => onChange(e)}
-                    className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                    autoComplete={autoComplete}
+                    className={meta && meta.touched && !meta.valid ? "input-error" : "input-normal"}
                 />
             </div>
-            { meta && meta.touched && !meta.valid && <div id="form-error" className="text-red-500 text-sm">{ meta.error }</div> }
+            { meta && meta.touched && !meta.valid && <div id="form-error" className="error-message">{ meta.error }</div> }
         </div>
     );
 };

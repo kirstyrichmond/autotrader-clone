@@ -184,6 +184,7 @@ export default function FindCar() {
               label="Current mileage"
               name="mileage"
               value={ formik.values.mileage }
+              type="number"
               meta={ {
                   valid: !Boolean(formik.errors.mileage),
                   error: formik.errors.mileage,

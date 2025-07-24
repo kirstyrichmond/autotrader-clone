@@ -50,3 +50,13 @@ export const advertSchema = yup.object().shape({
     engine_size: yup.string().required("Required"),
     attention_grabber: yup.string().required("Required"),
 })
+
+export const loginSchema = yup.object().shape({
+    email: yup.string().email("Please enter a valid email address").required("Required"),
+    password: yup.string().min(6, "Password must be at least 6 characters").required("Required"),
+})
+
+export const registerSchema = yup.object().shape({
+    email: yup.string().email("Please enter a valid email address").required("Required"),
+    password: yup.string().min(6, "Password must be at least 6 characters").required("Required"),
+})

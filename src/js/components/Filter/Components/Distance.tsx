@@ -39,7 +39,7 @@ const Distance = () => {
     <div className="space-y-4 sm:space-y-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Postcode or Location
+          Postcode
         </label>
         <input
           type="text"
@@ -48,8 +48,7 @@ const Distance = () => {
           onChange={(e) => handlePostcodeChange(e.target.value)}
           onBlur={(e) => handlePostcodeBlur(e.target.value)}
           className={`
-            w-full p-3 sm:p-2 border rounded-lg text-base sm:text-sm
-            focus:outline-none focus:ring-2 transition-colors
+            input-base p-3 sm:p-2 rounded-lg text-base sm:text-sm
             min-h-[48px] sm:min-h-[auto] touch-manipulation
             ${postcodeError 
               ? 'border-red-500 focus:ring-red-500 bg-red-50' 
@@ -58,8 +57,7 @@ const Distance = () => {
           `}
         />
         {postcodeError && (
-          <p className="mt-2 text-sm text-red-600 flex items-start">
-            <span className="inline-block w-1 h-1 bg-red-600 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+          <p className="error-message">
             {postcodeError}
           </p>
         )}

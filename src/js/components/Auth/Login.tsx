@@ -1,22 +1,41 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../src/store/hooks';
 import { login } from '../../../../src/store/slices/authSlice';
+import { Formik, Form, FormikHelpers } from "formik";
+import { loginSchema } from "../../schemas/index";
+import Input from "../Input";
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
 
 const Login: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({setIsLogIn}) => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector(state => state.auth);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { error } = useAppSelector(state => state.auth);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted with:', { email, password });
-    
+  const initialValues: LoginFormValues = {
+    email: "",
+    password: "",
+  };
+
+  const handleSubmit = async (
+    values: LoginFormValues,
+    { setSubmitting, setStatus }: FormikHelpers<LoginFormValues>
+  ) => {
     try {
-      const result = await dispatch(login({ email, password })).unwrap();
+      setStatus(null);
+      console.log('Form submitted with:', values);
+      const result = await dispatch(login({ 
+        email: values.email, 
+        password: values.password 
+      })).unwrap();
       console.log('Login successful:', result);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Login failed:', err);
+      setStatus(err.message || "Login failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -28,46 +47,62 @@ const Login: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({setIs
           Create an account
         </button>
       </p>
-      {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded">
-          {error}
-        </div>
-      )}
-      <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700">Email address</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="e.g. name@email.com"
-            className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            autoFocus
-          />
-        </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter your password"
-            className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full p-3 rounded text-white font-medium
-            ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}
-          `}
-        >
-          {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-      </form>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={loginSchema}
+        onSubmit={handleSubmit}
+      >
+        {(formik) => (
+          <Form className="space-y-6">
+            {(error || formik.status) && (
+              <div className="bg-red-50 text-red-600 p-3 rounded">
+                {formik.status || error}
+              </div>
+            )}
+
+            <Input
+              name="email"
+              label="Email address"
+              type="email"
+              value={formik.values.email}
+              placeholder="e.g. name@email.com"
+              autoComplete="email"
+              meta={{
+                valid: !Boolean(formik.errors.email),
+                error: formik.errors.email,
+                touched: formik.touched.email
+              }}
+              onChange={formik.handleChange}
+            />
+
+            <Input
+              name="password"
+              label="Password"
+              type="password"
+              value={formik.values.password}
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              meta={{
+                valid: !Boolean(formik.errors.password),
+                error: formik.errors.password,
+                touched: formik.touched.password
+              }}
+              onChange={formik.handleChange}
+            />
+
+            <button
+              type="submit"
+              disabled={formik.isSubmitting}
+              className={`w-full p-3 rounded text-white font-medium
+                ${formik.isSubmitting ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}
+              `}
+            >
+              {formik.isSubmitting ? 'Signing in...' : 'Sign in'}
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 };
