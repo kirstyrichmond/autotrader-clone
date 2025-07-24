@@ -66,6 +66,7 @@ const Register: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({se
               type="email"
               value={formik.values.email}
               placeholder="e.g. name@email.com"
+              autoComplete="username"
               meta={{
                 valid: !Boolean(formik.errors.email),
                 error: formik.errors.email,

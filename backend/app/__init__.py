@@ -8,10 +8,12 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__, static_url_path='/static', static_folder='static')
-    CORS(app, origins=['http://localhost:3000', 'http://localhost:3001', 'https://autotrader-clone.vercel.app'], 
+    CORS(app, 
+         origins=['http://localhost:3000', 'http://localhost:3001', 'https://autotrader-clone.vercel.app'],
          methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-         allow_headers=['Content-Type', 'Authorization', 'Accept'],
-         supports_credentials=True)
+         allow_headers=['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+         supports_credentials=True,
+         expose_headers=['Content-Range', 'X-Content-Range'])
     
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vehicles.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
