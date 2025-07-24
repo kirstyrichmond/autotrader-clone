@@ -145,7 +145,6 @@ const chatSlice = createSlice({
         state.messages.push(action.payload);
       })
       .addCase(createChat.fulfilled, (state, action) => {
-        // You might want to fetch the chat details or add other logic here
         console.log('Chat created:', action.payload);
       })
       .addCase(fetchUnreadCount.fulfilled, (state, action) => {
@@ -153,11 +152,9 @@ const chatSlice = createSlice({
       })
       .addCase(markMessagesRead.fulfilled, (state, action) => {
         state.unreadCount = Math.max(0, state.unreadCount - 1);
-        // Update the messages in the chat
         const chatId = action.meta.arg.chatId;
         const userId = action.meta.arg.userId;
         
-        // Find the chat and update its messages
         const chat = state.chats.find(c => c.id === chatId);
         if (chat) {
           chat.messages = chat.messages.map(msg => ({

@@ -50,7 +50,6 @@ const initialState: VehicleState = {
 export const createVehicleListing = createAsyncThunk(
     'vehicles/create',
     async (listing: VehicleListing) => {
-      // Transform the data to match Python naming convention
       const transformedListing = {
         user_id: listing.user_id,
         id: listing.id,
@@ -107,7 +106,6 @@ export const createVehicleListing = createAsyncThunk(
 export const updateVehicleListing = createAsyncThunk(
     'vehicles/update',
     async (listing: VehicleListing) => {
-      // Transform the data to match Python naming convention
       const transformedListing = {
         user_id: listing.user_id,
         id: listing.id,

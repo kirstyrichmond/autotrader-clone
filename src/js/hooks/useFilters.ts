@@ -56,8 +56,6 @@ export const useFilters = () => {
     };
     dispatch(setFilters(newFilters));
     
-    // Only auto-search for non-text inputs (like dropdowns)
-    // Text inputs like postcode should only search on form submit
     if (key !== 'postcode') {
       handleSearch(newFilters);
     }
@@ -71,7 +69,6 @@ export const useFilters = () => {
     };
     setLocalFilters(prev => ({ ...prev, [key]: value }));
     dispatch(setFilters(newFilters));
-    // Don't trigger search automatically
   };
 
   const handleFilterBlur = (key: keyof typeof filters) => {

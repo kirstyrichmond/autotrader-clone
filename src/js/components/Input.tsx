@@ -25,10 +25,7 @@ const Input: React.FC<InputProps> = ({ name, label, type = "text", placeholder, 
                     placeholder={placeholder}
                     value={value ?? ""}
                     onChange={(e) => onChange(e)}
-                    // className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-                    // className={ `${ meta.touched && !meta.valid && "text-[#fc8181]" } disabled:cursor-not-allowed
-                                // p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full` }
                 />
             </div>
             { meta && meta.touched && !meta.valid && <div id="form-error" className="text-red-500 text-sm">{ meta.error }</div> }

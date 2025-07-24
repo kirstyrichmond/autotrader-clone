@@ -13,10 +13,8 @@ const Distance = () => {
   const [postcodeError, setPostcodeError] = useState<string | null>(null);
 
   const handlePostcodeChange = async (value: string) => {
-    // Update the filter value
     handleFilterChangeOnly('postcode', value);
     
-    // Validate using Yup schema
     try {
       await searchFiltersSchema.validateAt('postcode', { postcode: value });
       setPostcodeError(null);
@@ -27,7 +25,6 @@ const Distance = () => {
 
   const handlePostcodeBlur = (value: string) => {
     if (value) {
-      // Format the postcode if it's valid
       const clean = value.replace(/\s/g, '').toUpperCase();
       if (clean.length >= 5) {
         const formatted = clean.slice(0, -3) + ' ' + clean.slice(-3);

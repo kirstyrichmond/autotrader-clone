@@ -10,6 +10,7 @@ import GalleryModal from '@/components/GalleryModal';
 import { Vehicle } from '@/components/ResultItem';
 import { addFavorite, fetchFavorites, removeFavorite } from '../../store/slices/favoritesSlice';
 import { createChat } from '../../store/slices/chatSlice';
+import { openAuthModal } from '../../store/slices/authSlice';
 
 const CarDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ const CarDetails = () => {
   const navigate = useNavigate();
   const { currentListing: vehicle, loading, error } = useSelector((state: RootState) => state.listings);
   const userId = useSelector((state: RootState) => state.auth.user?.id);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const favorites = useSelector((state: RootState) => state.favorites.favorites);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -26,13 +28,13 @@ const CarDetails = () => {
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!userId) {
-      console.log('No user ID found');
+    if (!isAuthenticated) {
+      dispatch(openAuthModal());
       return;
     }
     
-    if (!vehicle?.id) {
-      console.log('No vehicle ID found');
+    if (!userId || !vehicle?.id) {
+      console.log('Missing user ID or vehicle ID');
       return;
     }
   
@@ -54,7 +56,13 @@ const CarDetails = () => {
   };
 
   const startChat = async () => {
+    if (!isAuthenticated) {
+      dispatch(openAuthModal());
+      return;
+    }
+
     if (!userId || !vehicle) {
+      console.log('Missing user ID or vehicle data');
       return;
     }
   
@@ -144,7 +152,6 @@ const CarDetails = () => {
   return (
     <>
       <div className="max-w-7xl mx-auto bg-white">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <button 
             onClick={handleBack}
@@ -166,10 +173,7 @@ const CarDetails = () => {
             </button>
           </div>
         </div>
-
-        {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
-          {/* Left column - Images */}
           <div className="relative">
             <div 
               onClick={() => openGallery(0)}
@@ -202,8 +206,6 @@ const CarDetails = () => {
               )}
             </div>
           </div>
-
-          {/* Right column - Details */}
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-semibold">{vehicle.make} {vehicle.model}</h1>
@@ -211,7 +213,6 @@ const CarDetails = () => {
                 {vehicle.engine_size} {vehicle.fuel_type} {vehicle.transmission} ({vehicle.power})
               </p>
             </div>
-
             <div className="flex flex-wrap gap-3">
               <span className="bg-gray-100 px-4 py-2 rounded-full text-sm">
                 {vehicle.mileage} miles
@@ -226,7 +227,6 @@ const CarDetails = () => {
                 {vehicle.fuel_type}
               </span>
             </div>
-
             <div className="">
               <div className="text-lg font-semibold mb-4">{vehicle.attention_grabber}</div>
               <div className="text-4xl font-bold">£{vehicle.price}</div>
@@ -238,7 +238,6 @@ const CarDetails = () => {
                 Message seller
               </button>
             </div>
-
             <Card className="p-2">
               <div className="flex items-center justify-between">
                 <div>
@@ -255,16 +254,12 @@ const CarDetails = () => {
             </Card>
           </div>
         </div>
-
-        {/* Description section */}
         <div className="p-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Description</h2>
             <p className="text-gray-600 whitespace-pre-line">{vehicle.description}</p>
           </Card>
         </div>
-
-        {/* Vehicle details section */}
         <div className="p-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-6">Vehicle details</h2>
@@ -291,8 +286,6 @@ const CarDetails = () => {
           </Card>
         </div>
       </div>
-
-      {/* Gallery Modal */}
       <GalleryModal
         images={parsedImages}
         isOpen={isGalleryOpen}

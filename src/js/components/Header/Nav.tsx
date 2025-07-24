@@ -10,21 +10,22 @@ import { AppDispatch, RootState } from "src/store";
 import { useNavigate } from "react-router-dom";
 import { Mail } from 'lucide-react';
 import { fetchUnreadCount } from "../../../store/slices/chatSlice";
+import { openAuthModal, closeAuthModal } from "../../../store/slices/authSlice";
 
 const Nav: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const userId = useSelector((state: RootState) => state.auth.user?.id);
     const unreadCount = useSelector((state: RootState) => state.chat.unreadCount);
     const navigate = useNavigate();
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const isLoggedIn = useSelector((state: RootState) => state.auth.isAuthenticated);
+    const isLoggedIn = useSelector((state: RootState) => state.auth?.isAuthenticated ?? false);
+    const isAuthModalOpen = useSelector((state: RootState) => state.auth?.isAuthModalOpen ?? false);
 
     const handleAccountClick = () => {
         if (isLoggedIn) {
             navigate('/secure/my-autotrader');
         } else {
-            setIsAuthModalOpen(true);
+            dispatch(openAuthModal());
         }
         setIsMobileMenuOpen(false);
     }
@@ -33,7 +34,7 @@ const Nav: React.FC = () => {
         if (isLoggedIn) {
             navigate('/secure/saved-adverts');
         } else {
-            setIsAuthModalOpen(true);
+            dispatch(openAuthModal());
         }
         setIsMobileMenuOpen(false);
     }
@@ -42,7 +43,7 @@ const Nav: React.FC = () => {
         if (isLoggedIn) {
             navigate('/chats');
         } else {
-            setIsAuthModalOpen(true);
+            dispatch(openAuthModal());
         }
         setIsMobileMenuOpen(false);
     }
@@ -63,7 +64,7 @@ const Nav: React.FC = () => {
 
     const handleMenuItemClick = (item: typeof menuItems[0]) => {
         if (item.requiresAuth && !isLoggedIn) {
-            setIsAuthModalOpen(true);
+            dispatch(openAuthModal());
         } else {
             navigate(item.path);
         }
@@ -173,7 +174,7 @@ const Nav: React.FC = () => {
             </div>
             <AuthModal
                 isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)} 
+                onClose={() => dispatch(closeAuthModal())} 
             />
         </>
     );

@@ -2,6 +2,7 @@ import React from "react";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { addFavorite, removeFavorite } from "../../store/slices/favoritesSlice";
+import { openAuthModal } from "../../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 
@@ -46,6 +47,7 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
   const navigate = useNavigate();
 
   const userId = useSelector((state: RootState) => state.auth.user?.id);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const favorites = useSelector((state: RootState) => state.favorites.favorites);
   const isFavorite = favorites.some((favorite) => favorite.id === vehicle?.id);
   
@@ -70,13 +72,13 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
     const handleFavoriteClick = async (e: React.MouseEvent) => {
       e.stopPropagation();
       
-      if (!userId) {
-        console.log('No user ID found');
+      if (!isAuthenticated) {
+        dispatch(openAuthModal());
         return;
       }
       
-      if (!vehicle?.id) {
-        console.log('No vehicle ID found');
+      if (!userId || !vehicle?.id) {
+        console.log('Missing user ID or vehicle ID');
         return;
       }
     
@@ -102,15 +104,12 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
       onClick={handleClick}
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer relative"
     >
-      {/* Favorite button */}
       <button 
         onClick={handleFavoriteClick}
         className="absolute top-2 right-2 z-10 bg-gray-100 rounded-full p-1 shadow-md transition-colors hover:border-gray-100"
       >
         <Heart className="w-3 h-3 text-red-600 hover:text-black" />
       </button>
-
-      {/* Image */}
       <div className="aspect-[4/3] relative">
         {getImageUrl(vehicle) ? (
           <img
@@ -124,19 +123,12 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
           </div>
         )}
       </div>
-
-      {/* Content */}
       <div className="p-3">
-        {/* Title */}
         <h2 className="font-semibold text-sm">{make} {model}</h2>
         <p className="text-xs text-gray-600">{engine_size} {body_type}</p>
-        
-        {/* Info */}
         {attention_grabber && (
           <p className="text-xs text-gray-700 mt-1">{attention_grabber}</p>
         )}
-
-        {/* Specs */}
         <div className="flex gap-1 mt-2 text-xs text-gray-600">
           <div className="bg-gray-100 px-2 py-0.5 rounded">
             {year} ({year.slice(-2)} reg)
@@ -145,8 +137,6 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
             {typeof mileage === 'number' ? mileage.toLocaleString() : mileage} miles
           </div>
         </div>
-
-        {/* Location and Price */}
         <div className="mt-3 flex flex-col">
           <div className="flex items-start gap-1 mb-1">
             <span className="text-lg font-bold">£{price.toLocaleString()}</span>

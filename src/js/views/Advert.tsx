@@ -221,14 +221,13 @@ const Advert: React.FC = () => {
 
   useEffect(() => {
     const fetchListingData = async () => {
-      if (id) { // If we have an ID, we're in edit mode
+      if (id) {
         try {
           const response = await fetch(`${API_BASE_URL}/vehicles/${id}`);
           const data = await response.json();
           
           setNewVehicleData(data);
           
-          // Set the images
           if (data.images) {
             const formattedImages: ImageData[] = data.images.map((img: any) => ({
               preview: img.url,
@@ -243,7 +242,6 @@ const Advert: React.FC = () => {
             }));
             setImages(formattedImages);
             
-            // Set main image index
             const mainImageIdx = formattedImages.findIndex(img => img.is_primary);
             if (mainImageIdx !== -1) {
               setMainImageIndex(mainImageIdx);
@@ -279,7 +277,6 @@ const Advert: React.FC = () => {
     try {
       const processedImages = await Promise.all(
         validImageFiles.map(async (file) => {
-          // Convert to Base64
           const base64 = await new Promise<string>((resolve) => {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -330,7 +327,6 @@ const Advert: React.FC = () => {
       URL.revokeObjectURL(newImages[index].preview || '');
       newImages.splice(index, 1);
       
-      // Update main image index if necessary
       if (index === mainImageIndex) {
         setMainImageIndex(0);
       } else if (index < mainImageIndex) {
@@ -341,7 +337,6 @@ const Advert: React.FC = () => {
     });
   };
 
-  // Clean up object URLs on unmount
   React.useEffect(() => {
     return () => {
       images.forEach(image => {
@@ -355,7 +350,6 @@ const Advert: React.FC = () => {
   const handleOnSubmit = async (
     values: AdvertInitialValues,
     formikHelpers: FormikHelpers<AdvertInitialValues>) => {
-    // e.preventDefault();
   
     if (!user?.id) {
       console.error('User ID is missing');
@@ -403,22 +397,20 @@ const Advert: React.FC = () => {
     images: validImages
   };
 
-  console.log('User ID being sent:', user.id);  // Add this log
+  console.log('User ID being sent:', user.id);
 
 
-  console.log('Full user object:', user);  // Add this debug log
-  console.log('Listing data user_id:', listingData.user_id);  // Add this specific debug log
+  console.log('Full user object:', user);
+  console.log('Listing data user_id:', listingData.user_id);
   console.log('Sending data:', JSON.stringify(listingData, null, 2));
     
   try {
     if (id) {
-      // Update existing listing
       await dispatch(updateVehicleListing(listingData)).unwrap();
       formikHelpers.resetForm({ values });
 
       navigate(`/car-details/${id}`);
     } else {
-      // Create new listing
       const result = await dispatch(createVehicleListing(listingData)).unwrap();
       navigate(`/car-details/${result.id}`);
     }
@@ -452,13 +444,12 @@ const Advert: React.FC = () => {
       }}
     >
     { (formik) => {
-    console.log("Current form values:", formik.values); // Add this line
+    console.log("Current form values:", formik.values);
 
     return (
         // @ts-ignore
       <Form>
     <div className="max-w-4xl mx-auto bg-white">
-      {/* Photo Upload Section */}
       <div 
         className={`bg-gray-50 p-8 rounded-lg text-center mb-6 transition-colors
           ${isDragging ? 'bg-blue-50 border-2 border-dashed border-blue-500' : ''}`}
@@ -510,15 +501,12 @@ const Advert: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Car Details */}
       <div className="space-y-6 px-4">
         <div>
           <h1 className="text-2xl font-semibold">{`${newVehicleData?.make} ${newVehicleData?.model} ${newVehicleData?.year}`}</h1>
           {/* <p className="text-gray-600">{newVehicleData?.variant}</p> */}
           {/* <button className="text-blue-600 hover:underline mt-2">Edit vehicle details</button> */}
         </div>
-
         {/* <button className="text-blue-600 hover:underline">Add attention grabber</button> */}
         <div className='flex flex-col space-y-2'>
             <Input
@@ -533,8 +521,6 @@ const Advert: React.FC = () => {
               onChange={(e) => formik.handleChange(e) }
             /> 
         </div>
-
-        {/* Price Section */}
         <div className='flex flex-col space-y-2'>
             <Input
               label="Price"
@@ -548,13 +534,10 @@ const Advert: React.FC = () => {
               onChange={(e) => formik.handleChange(e) }
             /> 
         </div>
-
-        {/* Overview */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Overview</h2>
           {/* <p>{vehicleData.owners} owners, MOT Due: {vehicleData.motDue}</p> */}
           {/* <button className="text-blue-600 hover:underline">Edit owners, service history, MOT and seats</button> */}
-
           <div className='flex flex-col space-y-2'>
             <Input
               label="Owners"
@@ -569,7 +552,6 @@ const Advert: React.FC = () => {
               onChange={(e) => formik.handleChange(e) }
             />
           </div>
-
           <div className='flex flex-col space-y-2'>
             <Input
               label="Mileage"
@@ -713,7 +695,6 @@ const Advert: React.FC = () => {
             />
           </div>
 
-          {/* Car Specs Table */}
           <div className="grid grid-cols-2 gap-4 mt-4">
             {/* <div className="flex items-center gap-2">
               <span className="text-gray-600">Mileage</span>
@@ -736,14 +717,12 @@ const Advert: React.FC = () => {
           </div>
         </div>
 
-        {/* Description */}
         {/* <div className="space-y-4">
           <h2 className="text-xl font-semibold">Description</h2>
           <p className="text-gray-600">You have not added a description yet. Cars with a detailed description sell quicker</p>
           <button className="text-blue-600 hover:underline">Add description</button>
         </div> */}
 
-        {/* Additional Sections */}
         {[
           { icon: Star, title: 'Vehicle features', chevron: true },
           { icon: Calculator, title: 'Running costs', chevron: true },
@@ -764,13 +743,9 @@ const Advert: React.FC = () => {
             {section.chevron && <ChevronRight className="w-5 h-5 text-gray-400" />}
           </button>
         ))}
-
-        {/* Submit Button */}
         <button type='submit'className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 mt-6">
           I'm happy with my ad
         </button>
-
-        {/* Back to Top */}
         <div className="flex justify-center py-8">
           <button
             onClick={scrollToTop}

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import AuthModal from "../Auth/AuthModal";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../store";
+import { openAuthModal } from "../../../store/slices/authSlice";
 
 const MenuNav: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
     const menuItems = [
@@ -24,34 +24,28 @@ const MenuNav: React.FC = () => {
         e.preventDefault();
         
         if (item.requiresAuth && !isAuthenticated) {
-            setIsAuthModalOpen(true);
+            dispatch(openAuthModal());
         } else {
             navigate(item.path);
         }
     };
 
     return (
-        <>
-            <div className="flex items-center h-auto">
-                <ul className="flex gap-3">
-                    {menuItems.map((item, index) => (
-                        <li key={index}>
-                            <a
-                                href={item.path}
-                                onClick={(e) => handleItemClick(e, item)}
-                                className="text-[#242d3d] hover:text-blue-600 transition-colors"
-                            >
-                                {item.name}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <AuthModal
-                isOpen={isAuthModalOpen}
-                onClose={() => setIsAuthModalOpen(false)}
-            />
-        </>
+        <div className="flex items-center h-auto">
+            <ul className="flex gap-3">
+                {menuItems.map((item, index) => (
+                    <li key={index}>
+                        <a
+                            href={item.path}
+                            onClick={(e) => handleItemClick(e, item)}
+                            className="text-[#242d3d] hover:text-blue-600 transition-colors"
+                        >
+                            {item.name}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 };
 

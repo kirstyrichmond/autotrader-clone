@@ -12,13 +12,15 @@ interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  isAuthModalOpen: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
   loading: false,
-  error: null
+  error: null,
+  isAuthModalOpen: false
 };
 
 export const register = createAsyncThunk(
@@ -56,7 +58,7 @@ export const login = createAsyncThunk(
         throw new Error(data.error || 'Login failed');
       }
 
-      if (!data.user || !data.user.id) {  // Check specifically for user.id
+      if (!data.user || !data.user.id) {
         console.error('Invalid user data received:', data);
         throw new Error('Invalid response from server - missing user ID');
       }
@@ -79,13 +81,17 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    openAuthModal: (state) => {
+      state.isAuthModalOpen = true;
+    },
+    closeAuthModal: (state) => {
+      state.isAuthModalOpen = false;
     }
   },
   extraReducers: (builder) => {
     builder
-      // Handle Redux Persist purge
       .addCase(PURGE, () => initialState)
-      // Register cases
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -94,6 +100,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
+        state.isAuthModalOpen = false;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -108,6 +115,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.isAuthenticated = true;
+        state.isAuthModalOpen = false;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -116,5 +124,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, openAuthModal, closeAuthModal } = authSlice.actions;
 export default authSlice.reducer;
