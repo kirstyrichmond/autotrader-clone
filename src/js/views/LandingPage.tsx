@@ -1,8 +1,16 @@
-import React from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { clearFilters } from "../../store/slices/vehiclesSlice";
 import VehicleSearchForm from "@/components/VehicleSearchForm";
 import bannerImage from "../../assets/images/banner.avif";
+import { AppDispatch } from "../../store";
 
 export default function Main() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(clearFilters());
+  }, [dispatch]);
   return (
     <div>
       <div className="relative min-h-[500px] md:h-[600px] lg:h-[700px] w-full overflow-hidden">
