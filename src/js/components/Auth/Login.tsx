@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../../src/store/hooks';
-import { login } from '../../../../src/store/slices/authSlice';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useAppDispatch } from '../../../../src/store/hooks';
+import { login, clearError } from '../../../../src/store/slices/authSlice';
 import { Formik, Form, FormikHelpers } from "formik";
 import { loginSchema } from "../../schemas/index";
 import Input from "../Input";
@@ -12,12 +12,15 @@ interface LoginFormValues {
 
 const Login: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({setIsLogIn}) => {
   const dispatch = useAppDispatch();
-  const { error } = useAppSelector(state => state.auth);
 
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
   };
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleSubmit = async (
     values: LoginFormValues,
@@ -55,9 +58,9 @@ const Login: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({setIs
       >
         {(formik) => (
           <Form className="space-y-6" noValidate>
-            {(error || formik.status) && (
+            {formik.status && (
               <div className="bg-red-50 text-red-600 p-3 rounded">
-                {formik.status || error}
+                {formik.status}
               </div>
             )}
 

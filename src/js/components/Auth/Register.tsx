@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { useAppDispatch } from "../../../store/hooks";
-import { register } from "../../../store/slices/authSlice";
+import { register, clearError } from "../../../store/slices/authSlice";
 import { Formik, Form, FormikHelpers } from "formik";
 import { registerSchema } from "../../schemas/index";
 import Input from "../Input";
@@ -17,6 +17,10 @@ const Register: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({se
     email: "",
     password: "",
   };
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleSubmit = async (
     values: RegisterFormValues,
