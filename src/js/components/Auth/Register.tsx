@@ -51,7 +51,7 @@ const Register: React.FC<{setIsLogIn: Dispatch<SetStateAction<boolean>>}> = ({se
         onSubmit={handleSubmit}
       >
         {(formik) => (
-          <Form className="space-y-6">
+          <Form className="space-y-6" noValidate>
             {formik.status && (
               <div className="bg-red-50 text-red-600 p-3 rounded">{formik.status}</div>
             )}
