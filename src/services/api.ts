@@ -26,7 +26,9 @@ interface SearchResponse {
   total_pages: number;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API_BASE_URL } from '../js/config/api';
+
+const API_URL = API_BASE_URL;
 
 const searchVehicles = async (filters: SearchFilters): Promise<SearchResponse> => {
   const params = new URLSearchParams();

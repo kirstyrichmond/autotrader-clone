@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API_BASE_URL } from '../../js/config/api';
 
 interface Message {
   id: number;
@@ -49,7 +50,7 @@ const initialState: ChatState = {
 export const createChat = createAsyncThunk(
     'chat/createChat',
     async (data: { listing_id: number; buyer_id: number; seller_id: number }) => {
-      const response = await fetch('http://localhost:5000/api/chats', {
+      const response = await fetch(`${API_BASE_URL}/chats`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export const createChat = createAsyncThunk(
 export const fetchUserChats = createAsyncThunk(
   'chat/fetchUserChats',
   async (userId: number) => {
-    const response = await fetch(`http://localhost:5000/api/chats?user_id=${userId}`);
+    const response = await fetch(`${API_BASE_URL}/chats?user_id=${userId}`);
     return await response.json();
   }
 );
@@ -77,7 +78,7 @@ export const fetchUserChats = createAsyncThunk(
 export const fetchChatMessages = createAsyncThunk(
   'chat/fetchChatMessages',
   async (chatId: number) => {
-    const response = await fetch(`http://localhost:5000/api/chats/${chatId}/messages`);
+    const response = await fetch(`${API_BASE_URL}/chats/${chatId}/messages`);
     return await response.json();
   }
 );
@@ -85,7 +86,7 @@ export const fetchChatMessages = createAsyncThunk(
 export const fetchChatById = createAsyncThunk(
     'chat/fetchChatById',
     async (chatId: number) => {
-      const response = await fetch(`http://localhost:5000/api/chats/${chatId}`);
+      const response = await fetch(`${API_BASE_URL}/chats/${chatId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch chat');
       }
@@ -96,7 +97,7 @@ export const fetchChatById = createAsyncThunk(
 export const sendMessage = createAsyncThunk(
   'chat/sendMessage',
   async ({ chatId, senderId, content }: { chatId: number; senderId: number; content: string }) => {
-    const response = await fetch(`http://localhost:5000/api/chats/${chatId}/messages`, {
+    const response = await fetch(`${API_BASE_URL}/chats/${chatId}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sender_id: senderId, content })
@@ -108,7 +109,7 @@ export const sendMessage = createAsyncThunk(
 export const fetchUnreadCount = createAsyncThunk(
     'chat/fetchUnreadCount',
     async (userId: number) => {
-      const response = await fetch(`http://localhost:5000/api/messages/unread-count/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/messages/unread-count/${userId}`);
       const data = await response.json();
       return data.unread_count;
     }
@@ -117,7 +118,7 @@ export const fetchUnreadCount = createAsyncThunk(
   export const markMessagesRead = createAsyncThunk(
     'chat/markMessagesRead',
     async ({ chatId, userId }: { chatId: number; userId: number }) => {
-      const response = await fetch('http://localhost:5000/api/messages/mark-read', {
+      const response = await fetch(`${API_BASE_URL}/messages/mark-read`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: chatId, user_id: userId })

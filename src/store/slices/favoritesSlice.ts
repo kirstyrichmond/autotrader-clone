@@ -1,5 +1,6 @@
 import { Vehicle } from '@/components/ResultItem';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API_BASE_URL } from '../../js/config/api';
 
 interface FavoritesState {
   favorites: Vehicle[];
@@ -16,7 +17,7 @@ const initialState: FavoritesState = {
 export const fetchFavorites = createAsyncThunk(
   'favorites/fetchFavorites',
   async (userId: number) => {
-    const response = await fetch(`http://localhost:5000/api/favorites/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/favorites/${userId}`);
     if (!response.ok) throw new Error('Failed to fetch favorites');
     return response.json();
   }
@@ -27,7 +28,7 @@ export const addFavorite = createAsyncThunk(
   async ({ userId, vehicleId }: { userId: number; vehicleId: number }) => {
     console.log('Adding favorite:', { userId, vehicleId });
     
-    const response = await fetch(`http://localhost:5000/api/favorites/${userId}/${vehicleId}`, {
+    const response = await fetch(`${API_BASE_URL}/favorites/${userId}/${vehicleId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export const addFavorite = createAsyncThunk(
 export const removeFavorite = createAsyncThunk(
   'favorites/removeFavorite',
   async ({ userId, vehicleId }: { userId: number; vehicleId: number }) => {
-    const response = await fetch(`http://localhost:5000/api/favorites/${userId}/${vehicleId}`, {
+    const response = await fetch(`${API_BASE_URL}/favorites/${userId}/${vehicleId}`, {
       method: 'DELETE',
     });
     if (!response.ok) throw new Error('Failed to remove favorite');

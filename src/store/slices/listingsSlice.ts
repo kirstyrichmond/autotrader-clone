@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { API_BASE_URL } from '../../js/config/api';
 
 export interface VehicleListing {
   user_id: number;
@@ -81,7 +82,7 @@ export const createVehicleListing = createAsyncThunk(
       };
 
       try {
-        const response = await fetch('http://localhost:5000/api/vehicles', {
+        const response = await fetch(`${API_BASE_URL}/vehicles`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -138,7 +139,7 @@ export const updateVehicleListing = createAsyncThunk(
       };
 
       try {
-        const response = await fetch(`http://localhost:5000/api/vehicles/${transformedListing.id}`, {
+        const response = await fetch(`${API_BASE_URL}/vehicles/${transformedListing.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -163,7 +164,7 @@ export const updateVehicleListing = createAsyncThunk(
 export const fetchVehicleListings = createAsyncThunk(
   'vehicles/fetchAll',
   async () => {
-    const response = await fetch('http://localhost:5000/api/vehicles');
+    const response = await fetch(`${API_BASE_URL}/vehicles`);
 
     if (!response.ok) {
       const error = await response.json();
@@ -177,7 +178,7 @@ export const fetchVehicleListings = createAsyncThunk(
 export const fetchVehicleById = createAsyncThunk(
     'vehicles/fetchById',
     async (id: number) => {
-      const response = await fetch(`http://localhost:5000/api/vehicles/${id}`);
+      const response = await fetch(`${API_BASE_URL}/vehicles/${id}`);
 
       if (!response.ok) {
         const error = await response.json();

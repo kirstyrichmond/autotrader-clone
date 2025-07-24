@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { Card } from '@/components/ui/card';
 import { Pen, Trash2, Camera } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 
 interface VehicleListing {
   id: number;
@@ -26,7 +27,7 @@ const MyAdverts: React.FC = () => {
 
   const fetchMyListings = async (userId: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/vehicles/user/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/vehicles/user/${userId}`);
       const data = await response.json();
       setListings(data);
     } catch (error) {
@@ -49,7 +50,7 @@ const MyAdverts: React.FC = () => {
     e.stopPropagation();
     if (window.confirm('Are you sure you want to delete this listing?')) {
       try {
-        await fetch(`http://localhost:5000/api/vehicles/${id}`, {
+        await fetch(`${API_BASE_URL}/vehicles/${id}`, {
           method: 'DELETE',
         });
         fetchMyListings(user?.id ?? 0);

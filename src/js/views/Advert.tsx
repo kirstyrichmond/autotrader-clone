@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { createVehicleListing, updateVehicleListing } from '../../store/slices/listingsSlice';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { advertSchema } from '@/schemas';
+import { API_BASE_URL } from '../config/api';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
 
@@ -222,7 +223,7 @@ const Advert: React.FC = () => {
     const fetchListingData = async () => {
       if (id) { // If we have an ID, we're in edit mode
         try {
-          const response = await fetch(`http://localhost:5000/api/vehicles/${id}`);
+          const response = await fetch(`${API_BASE_URL}/vehicles/${id}`);
           const data = await response.json();
           
           setNewVehicleData(data);

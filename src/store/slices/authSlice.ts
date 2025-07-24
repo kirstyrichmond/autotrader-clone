@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PURGE } from 'redux-persist';
+import { API_BASE_URL } from '../../js/config/api';
 
 interface User {
   id: number;
@@ -23,7 +24,7 @@ const initialState: AuthState = {
 export const register = createAsyncThunk(
   'auth/register',
   async (credentials: { email: string; password: string }) => {
-    const response = await fetch('http://localhost:5000/api/auth/register', {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials)
@@ -41,7 +42,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

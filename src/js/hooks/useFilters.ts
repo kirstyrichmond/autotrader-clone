@@ -55,7 +55,23 @@ export const useFilters = () => {
       page: 1
     };
     dispatch(setFilters(newFilters));
-    handleSearch(newFilters);
+    
+    // Only auto-search for non-text inputs (like dropdowns)
+    // Text inputs like postcode should only search on form submit
+    if (key !== 'postcode') {
+      handleSearch(newFilters);
+    }
+  };
+
+  const handleFilterChangeOnly = (key: string, value: string | number | undefined) => {
+    const newFilters = {
+      ...filters,
+      [key]: value,
+      page: 1
+    };
+    setLocalFilters(prev => ({ ...prev, [key]: value }));
+    dispatch(setFilters(newFilters));
+    // Don't trigger search automatically
   };
 
   const handleFilterBlur = (key: keyof typeof filters) => {
@@ -91,6 +107,7 @@ export const useFilters = () => {
     totalResults,
     error,
     handleFilterChange,
+    handleFilterChangeOnly,
     handleFilterBlur,
     handleImmediateFilterChange,
     handleMultipleFilterChange

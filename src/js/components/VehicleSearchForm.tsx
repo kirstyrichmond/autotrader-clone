@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { AppDispatch, RootState } from "../../store";
 import { fetchVehicles, setFilters } from "../../store/slices/vehiclesSlice";
 import Distance from "./Filter/Components/Distance";
+import { searchFiltersSchema } from "../schemas";
 
 const VehicleSearchForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,7 +27,6 @@ const VehicleSearchForm = () => {
   }, []);
 
   const handleSearch = async (searchFilters: typeof filters, shouldUpdateUrl: boolean = true) => {
-    // Create URLSearchParams with only non-empty values
     const params = new URLSearchParams();
     Object.entries(searchFilters).forEach(([key, value]) => {
       if (value !== undefined && value !== '' && value !== 0) {
@@ -34,15 +34,12 @@ const VehicleSearchForm = () => {
       }
     });
 
-    // Reset to page 1 when filters change
     const filtersWithPage = { ...searchFilters, page: 1 };
 
     if (shouldUpdateUrl) {
-      // If we're already on the search page, just update the params
       if (location.pathname === '/search') {
         setSearchParams(params);
       } else {
-        // Otherwise, navigate to search page
         navigate({
           pathname: '/search',
           search: params.toString()
@@ -57,9 +54,22 @@ const VehicleSearchForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleSearch(filters);
+    setFormError(null);
+
+    try {
+      await searchFiltersSchema.validate(filters, { abortEarly: false });
+      handleSearch(filters);
+    } catch (validationError: any) {
+      if (validationError.errors && validationError.errors.length > 0) {
+        setFormError(validationError.errors[0]);
+      } else {
+        setFormError('Please check your search criteria');
+      }
+    }
   };
 
   const handleFilterChange = (key: string, value: string | number | undefined) => {
@@ -71,6 +81,13 @@ const VehicleSearchForm = () => {
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="grid gap-6 p-6 bg-white rounded-lg shadow">
         <Distance />
+        
+        {formError && (
+          <div className="p-3 text-red-700 bg-red-100 border border-red-300 rounded">
+            {formError}
+          </div>
+        )}
+        
         <button
           type="submit"
           disabled={loading}
