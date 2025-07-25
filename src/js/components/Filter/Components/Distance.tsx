@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useFilters } from '@/hooks/useFilters';
-import { searchFiltersSchema } from '../../../schemas';
+import { useFormikContext } from 'formik';
+import Input from '../../Input';
 
 interface DistanceProps {
   immediateFilter?: boolean;
@@ -9,35 +10,11 @@ interface DistanceProps {
 const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
   const { 
     filters,
-    localFilters, 
     handleFilterChangeOnly,
     handleImmediateFilterChange
   } = useFilters();
 
-  const [postcodeError, setPostcodeError] = useState<string | null>(null);
-
-  const handlePostcodeChange = async (value: string) => {
-    handleFilterChangeOnly('postcode', value);
-    
-    try {
-      await searchFiltersSchema.validateAt('postcode', { postcode: value });
-      setPostcodeError(null);
-    } catch (validationError: any) {
-      setPostcodeError(validationError.message);
-    }
-  };
-
-  const handlePostcodeBlur = (value: string) => {
-    if (value) {
-      const clean = value.replace(/\s/g, '').toUpperCase();
-      if (clean.length >= 5) {
-        const formatted = clean.slice(0, -3) + ' ' + clean.slice(-3);
-        if (formatted !== value) {
-          handleFilterChangeOnly('postcode', formatted);
-        }
-      }
-    }
-  };
+  const formik = useFormikContext<any>();
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -45,26 +22,22 @@ const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Postcode
         </label>
-        <input
+        <Input
+          name="postcode"
+          label=""
           type="text"
           placeholder="Enter postcode (e.g., M1 1AA)"
-          value={filters?.postcode || ''}
-          onChange={(e) => handlePostcodeChange(e.target.value)}
-          onBlur={(e) => handlePostcodeBlur(e.target.value)}
-          className={`
-            input-base p-3 sm:p-2 rounded-lg text-base sm:text-sm
-            min-h-[48px] sm:min-h-[auto] touch-manipulation
-            ${postcodeError 
-              ? 'border-red-500 focus:ring-red-500 bg-red-50' 
-              : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-            }
-          `}
+          value={formik.values.postcode || ''}
+          onChange={(e) => {
+            formik.setFieldValue('postcode', e.target.value);
+            handleFilterChangeOnly('postcode', e.target.value);
+          }}
+          meta={{
+            valid: !Boolean(formik.errors.postcode),
+            error: formik.errors.postcode,
+            touched: formik.touched.postcode
+          }}
         />
-        {postcodeError && (
-          <p className="error-message">
-            {postcodeError}
-          </p>
-        )}
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -72,17 +45,19 @@ const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
         </label>
         <select
           value={filters?.radius || 50}
-          onChange={(e) => immediateFilter 
-            ? handleImmediateFilterChange('radius', Number(e.target.value))
-            : handleFilterChangeOnly('radius', Number(e.target.value))
-          }
+          onChange={(e) => {
+            const value = e.target.value === 'NATIONAL' ? 'NATIONAL' : Number(e.target.value);
+            return immediateFilter 
+              ? handleImmediateFilterChange('radius', value)
+              : handleFilterChangeOnly('radius', value);
+          }}
           className="
             w-full p-3 sm:p-2 border border-gray-300 rounded-lg text-base sm:text-sm
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             min-h-[48px] sm:min-h-[auto] touch-manipulation bg-white
           "
         >
-          <option value={500}>National</option>
+          <option value="NATIONAL">National</option>
           <option value={5}>Within 5 miles</option>
           <option value={10}>Within 10 miles</option>
           <option value={20}>Within 20 miles</option>

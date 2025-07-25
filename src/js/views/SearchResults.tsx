@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { setFilters, fetchVehicles, FilterState } from '../../store/slices/vehiclesSlice';
+import { fetchFavorites } from '../../store/slices/favoritesSlice';
 import Results from '@/components/Results';
 import FilterDialog from '@/components/Filter/FilterDialog';
 import FilterBar from '@/components/Filter/FilterBar';
@@ -18,10 +19,12 @@ const SearchResults = () => {
   const { items: vehicles, loading, error, totalResults, filters } = useSelector(
     (state: RootState) => state.vehicles
   );
+  
+  const userId = useSelector((state: RootState) => state.auth.user?.id);
 
   const handleClearAll = () => {
     dispatch(setFilters({
-      radius: 500,
+      radius: 'NATIONAL',
       page: 1,
       perPage: 20,
       fuelTypes: []
@@ -51,8 +54,10 @@ const SearchResults = () => {
     searchParams.forEach((value, key) => {
       if (key === 'fuelTypes') {
         baseFilters.fuelTypes = value ? value.split(',') : [];
-      } else if (['minPrice', 'maxPrice', 'minYear', 'maxYear', 'minMileage', 'maxMileage', 'radius', 'page', 'perPage'].includes(key)) {
+      } else if (['minPrice', 'maxPrice', 'minYear', 'maxYear', 'minMileage', 'maxMileage', 'page', 'perPage'].includes(key)) {
         (baseFilters as any)[key] = value ? Number(value) : undefined;
+      } else if (key === 'radius') {
+        (baseFilters as any)[key] = value === 'NATIONAL' ? 'NATIONAL' : (value ? Number(value) : undefined);
       } else {
         (baseFilters as any)[key] = value || undefined;
       }
@@ -66,16 +71,28 @@ const SearchResults = () => {
     }
   }, [searchParams, dispatch]);
 
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchFavorites(userId));
+    }
+  }, [userId, dispatch]);
+
   const handleRemoveFilter = (key: keyof FilterState) => {
     const newFilters = { ...filters };
     if (key === 'fuelTypes') {
       newFilters.fuelTypes = [];
+    } else if (key === 'radius') {
+      newFilters.radius = 'NATIONAL';
     } else {
       (newFilters as any)[key] = undefined;
     }
     
     const params = new URLSearchParams(searchParams);
-    params.delete(key);
+    if (key === 'radius') {
+      params.set('radius', 'NATIONAL');
+    } else {
+      params.delete(key);
+    }
     
     navigate({
       pathname: '/search',

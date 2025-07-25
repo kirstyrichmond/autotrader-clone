@@ -1,4 +1,8 @@
 import React from "react";
+import { Formik, Form } from "formik";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { searchFiltersSchema } from "../../schemas";
 import AccordionItem from "./AccordionItem";
 import { 
   ArrowDownUp,
@@ -30,9 +34,9 @@ export type FiltersProps = {
 }
 
 const Filter = () => {
-  
+  const filters = useSelector((state: RootState) => state.vehicles.filters);
 
-  const filters = [
+  const filterItems = [
     {
       label: "Sort",
       value: "",
@@ -100,17 +104,23 @@ const Filter = () => {
       icon: Power
     }
   ];
+  
   return (
-    <div className="">
-      <h3 className="border-b border-slate-200 py-3">Filter and sort</h3>
-      <div className="">
-        {filters.map((filter, index) => (
+    <Formik
+      initialValues={filters}
+      validationSchema={searchFiltersSchema}
+      onSubmit={ () => {
+      } }
+      enableReinitialize
+    >
+      <Form>
+        {filterItems.map((filter, index) => (
           <div key={index} className="border-b border-slate-200">
             <AccordionItem item={filter} />
           </div>
         ))}
-      </div>
-    </div>
+      </Form>
+    </Formik>
   );
 };
 

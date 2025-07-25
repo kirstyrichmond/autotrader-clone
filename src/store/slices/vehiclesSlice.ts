@@ -4,7 +4,7 @@ import { Vehicle } from '@/components/ResultItem';
 
 export interface FilterState {
   postcode: string;
-  radius: number;
+  radius: number | 'NATIONAL';
   page: number;
   perPage: number;
   make?: string;

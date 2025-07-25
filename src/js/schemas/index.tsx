@@ -10,8 +10,10 @@ const validatePostcode = (value?: string): boolean => {
 };
 
 export const searchFiltersSchema = yup.object().shape({
-  postcode: yup.string().test('postcode', 'Please enter a valid UK postcode (e.g., M1 1AA)', validatePostcode),
-  radius: yup.number().min(1).max(500),
+  postcode: yup.string().required('Required').test('postcode', 'Please enter a valid UK postcode (e.g., M1 1AA)', validatePostcode),
+  radius: yup.mixed().test('radius', 'Invalid radius value', (value) => {
+    return value === 'NATIONAL' || (typeof value === 'number' && value >= 1 && value <= 500);
+  }),
   make: yup.string(),
   model: yup.string(),
   minPrice: yup.number().min(0),

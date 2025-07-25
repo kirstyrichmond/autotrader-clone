@@ -152,7 +152,7 @@ const Nav: React.FC = () => {
                                     onClick={handleMessagesClick} 
                                     className="w-full text-left px-4 py-3 text-gray-800 bg-white hover:bg-gray-50 transition-colors flex items-center gap-3"
                                 >
-                                    <Mail height={16} />
+                                    <Mail height={15} />
                                     <span>Messages</span>
                                     {unreadCount > 0 && (
                                         <div className="ml-auto bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">

@@ -2,7 +2,7 @@ import { Vehicle } from "@/components/ResultItem";
 
 interface SearchFilters {
   postcode?: string;
-  radius?: number;
+  radius?: number | 'NATIONAL';
   make?: string;
   model?: string;
   minPrice?: number;
@@ -34,6 +34,9 @@ const searchVehicles = async (filters: SearchFilters): Promise<SearchResponse> =
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== '') {
+      if (filters.radius === 'NATIONAL' && (key === 'radius' || key === 'postcode')) {
+        return;
+      }
       params.append(key, value.toString());
     }
   });

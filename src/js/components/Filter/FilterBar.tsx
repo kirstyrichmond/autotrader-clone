@@ -32,15 +32,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
         return `To ${value}`;
       case 'transmission':
         return value;
-        case 'radius':
-            return `Within ${value} miles`;
+      case 'radius':
+        return value === 'NATIONAL' ? 'National' : `Within ${value} miles`;
+      case 'postcode':
+        return value.toUpperCase();
       default:
         return value.toString();
     }
   };
 
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
-    if (['page', 'perPage', 'postcode'].includes(key)) return false;
+    if (['page', 'perPage'].includes(key)) return false;
     if (Array.isArray(value)) return value.length > 0;
     return value !== undefined && value !== '' && value !== 0;
   });
@@ -52,7 +54,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {activeFilters.map(([key, value]) => (
             <button
               key={key}
-              onClick={() => onRemoveFilter(key as keyof FilterState)}
+              onClick={() => {
+                if (key === 'radius') {
+                  if (value === 'NATIONAL') {
+                    onOpenFilters();
+                  } else {
+                    onRemoveFilter('radius');
+                  }
+                } else {
+                  onRemoveFilter(key as keyof FilterState);
+                }
+              }}
               className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100"
             >
               {getFilterLabel(key, value)}
