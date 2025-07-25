@@ -2,6 +2,7 @@ import React from 'react';
 import { useFilters } from '@/hooks/useFilters';
 import { useFormikContext } from 'formik';
 import Input from '../../Input';
+import { FilterState } from '../../../../store/slices/vehiclesSlice';
 
 interface DistanceProps {
   immediateFilter?: boolean;
@@ -14,7 +15,7 @@ const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
     handleImmediateFilterChange
   } = useFilters();
 
-  const formik = useFormikContext<any>();
+  const formik = useFormikContext<FilterState>();
 
   return (
     <div className="space-y-4 sm:space-y-6">
