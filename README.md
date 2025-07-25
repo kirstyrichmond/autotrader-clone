@@ -5,6 +5,75 @@ Created by Kirsty Richmond.
 ## Video Demo:
 https://www.youtube.com/watch?v=frmYy23yCwU
 
+## Visit site
+https://autotrader-clone.vercel.app/
+
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v16 or higher)
+- Python 3.9 or higher
+- Git
+
+### Backend Setup
+
+1. **Clone the repository**
+   ```bash
+   $ git clone <repository-url>
+   $ cd autotrader-clone
+   ```
+
+2. **Create and activate Python virtual environment**
+   ```bash
+   $ python3 -m venv autotrader-clone
+   $ source autotrader-clone/bin/activate  # On Windows: autotrader-clone\Scripts\activate
+   ```
+
+3. **Install Python dependencies**
+   ```bash
+   $ cd backend
+   $ pip install -r requirements.txt
+   ```
+
+4. **Initialize the database**
+   ```bash
+   $ python3 seed_data.py
+   ```
+
+5. **Start the Flask backend**
+   ```bash
+   $ python3 run.py
+   ```
+   The backend will run on `http://localhost:5000`
+
+### Frontend Setup
+
+1. **Install Node.js dependencies**
+   ```bash
+   $ cd .. # Go back to root directory
+   $ npm install
+   ```
+
+2. **Start the development server**
+   ```bash
+   $ npm run dev
+   ```
+   The frontend will run on `http://localhost:3000`
+
+### Environment Variables
+
+Create a `.env` file in the root directory with:
+```
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+### Database
+
+The application uses SQLite database. After running `seed_data.py`, you'll have sample data including:
+- Sample vehicle listings
+- Test user accounts
+- Vehicle images and location data
+
 ## Description:
 
 \*\* **Built for learning purposes only** \*\*
