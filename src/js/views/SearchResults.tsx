@@ -127,7 +127,7 @@ const SearchResults = () => {
       <div className="mx-auto px-4 py-4">
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
-        {!!vehicles.length && <Results vehicles={vehicles} />}
+        {vehicles.length > 0 && <Results vehicles={vehicles} />}
         {!loading && !vehicles.length && (
           <div className="p-4 bg-white rounded shadow">
             <p>No vehicles found matching your criteria</p>

@@ -1,10 +1,8 @@
-import FilterBox from "@/components/Filter/Filter";
-import Results from "@/components/Results";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store/hooks";
-import { EMPTY_ADVERT, setVehicleData, VehicleData } from "../../store/slices/advertSlice";
+import { EMPTY_ADVERT, setVehicleData } from "../../store/slices/advertSlice";
 import { Formik, FormikHelpers, Form } from "formik";
 import { findCarSchema } from "@/schemas";
 import { useSelector } from "react-redux";
@@ -136,11 +134,11 @@ export default function FindCar() {
     return (
         // @ts-ignore
       <Form>
-      <div className={`flex flex-col my-16 mx-32 gap-4 ${regSubmitted && 'items-center' }`}>
-          <h1 className="text-2xl font-semibold mb-4">Find Your Car</h1>
+      <div className={`flex flex-col my-8 mx-4 sm:my-16 sm:mx-8 lg:mx-32 gap-4 ${regSubmitted && 'items-center' }`}>
+          <h1 className={`text-2xl font-semibold mb-4 w-full ${!regSubmitted ? 'max-w-md mx-auto' : 'max-w-3xl mx-auto px-4 sm:px-8'}`}>Find Your Car</h1>
           { regSubmitted ? (
-          <><div className="max-w-3xl mx-auto p-8 bg-white rounded-lg shadow">
-          <div className="space-y-4 min-w-96 mb-4">
+          <><div className="w-full max-w-3xl mx-auto p-4 sm:p-8 bg-white rounded-lg shadow">
+          <div className="space-y-4 w-full sm:min-w-96 mb-4">
             <div className="space-y-1">
               <h1 className="text-base font-semibold text-gray-800">{newVehicleData?.make} {newVehicleData?.model}</h1>
             </div>
@@ -148,10 +146,10 @@ export default function FindCar() {
               {detailRows.map(({ label, value }) => (
                 <div
                   key={label}
-                  className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0"
+                  className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 border-b border-gray-200 last:border-b-0"
                 >
-                  <span className="text-gray-700">{label}</span>
-                  <span className="text-gray-600 font-medium">{value}</span>
+                  <span className="text-gray-700 text-sm sm:text-base">{label}</span>
+                  <span className="text-gray-600 font-medium text-sm sm:text-base mt-1 sm:mt-0">{value}</span>
                 </div>
               ))}
             </div>
@@ -159,15 +157,15 @@ export default function FindCar() {
           <button
               type="button"
               onClick={() => navigate(`/selling/advert`)}
-              className={`w-full p-3 rounded text-white font-medium bg-blue-600 hover:bg-blue-700`}
+              className={`w-full p-3 sm:p-4 rounded text-white font-medium bg-blue-600 hover:bg-blue-700 text-sm sm:text-base touch-manipulation min-h-[48px] sm:min-h-[auto]`}
             >
               Create advert
           </button>
         </div>
-        <p>Not the right car? <button onClick={() => resetForm(formik)} className="p-3 rounded text-blue-700 bg-transparent underline font-medium ">Search again</button></p>
+        <p className="text-sm sm:text-base text-center">Not the right car? <button onClick={() => resetForm(formik)} className="p-2 sm:p-3 rounded text-blue-700 bg-transparent underline font-medium text-sm sm:text-base">Search again</button></p>
         </>
         ) : (
-          <>
+          <div className="w-full max-w-md mx-auto space-y-4">
             <Input
               label="Registration number"
               description="Due to the limitations of the test API, the registration number must contain the letter 'A'."
@@ -194,12 +192,11 @@ export default function FindCar() {
             />
             <button
               type="submit"
-              // onClick={handleSubmit}
-              className={`w-full p-3 rounded text-white font-medium bg-blue-600 hover:bg-blue-700`}
+              className={`w-full p-3 sm:p-4 rounded text-white font-medium bg-blue-600 hover:bg-blue-700 text-sm sm:text-base touch-manipulation min-h-[48px] sm:min-h-[auto]`}
             >
               Find my car
             </button>
-          </>
+          </div>
         )}
       </div>
       </Form>

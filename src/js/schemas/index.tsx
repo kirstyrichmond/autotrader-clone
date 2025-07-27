@@ -41,7 +41,7 @@ export const advertSchema = yup.object().shape({
     registration: yup.string().required("Required"),
     price: yup.number().required("Required"),
     mot_due: yup.string().required("Required"),
-    description: yup.string().required("Required"),
+    description: yup.string().required("Required").min(10, "Description must be at least 10 characters"),
     power: yup.string().required("Required"),
     transmission: yup.string().required("Required"),
     fuel_type: yup.string().required("Required"),
@@ -51,6 +51,7 @@ export const advertSchema = yup.object().shape({
     postcode: yup.string().required("Required").test('postcode', 'Please enter a valid UK postcode (e.g., M1 1AA)', validatePostcode),
     engine_size: yup.string().required("Required"),
     attention_grabber: yup.string().required("Required"),
+    colour: yup.string().required("Required"),
 })
 
 export const loginSchema = yup.object().shape({

@@ -61,6 +61,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   } else {
                     onRemoveFilter('radius');
                   }
+                } else if (key === 'postcode') {
+                  onOpenFilters();
                 } else {
                   onRemoveFilter(key as keyof FilterState);
                 }
@@ -98,7 +100,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </button>
 
         </div>
-          {totalResults && (
+          {totalResults && totalResults > 0 && (
           <div className="mb-2">
             <span className="font-medium">{totalResults.toLocaleString()}</span> results
           </div>

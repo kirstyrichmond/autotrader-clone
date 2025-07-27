@@ -10,6 +10,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { advertSchema } from '@/schemas';
 import { API_BASE_URL } from '../config/api';
 import Input from '@/components/Input';
+import TextArea from '@/components/TextArea';
 import Select from '@/components/Select';
 
 interface AdvertInitialValues {
@@ -98,7 +99,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {images.map((image, index) => (
         <div
           key={image.id}
@@ -449,9 +450,9 @@ const Advert: React.FC = () => {
     return (
         // @ts-ignore
       <Form>
-    <div className="max-w-4xl mx-auto bg-white">
+    <div className="max-w-4xl mx-auto bg-white px-4 sm:px-6 lg:px-8">
       <div 
-        className={`bg-gray-50 p-8 rounded-lg text-center mb-6 transition-colors
+        className={`bg-gray-50 p-4 sm:p-8 rounded-lg text-center mb-6 transition-colors
           ${isDragging ? 'bg-blue-50 border-2 border-dashed border-blue-500' : ''}`}
         onDragOver={(e) => handleDrag(e, true)}
         onDragEnter={(e) => handleDrag(e, true)}
@@ -501,12 +502,14 @@ const Advert: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="space-y-6 px-4">
+      <div className="space-y-4 sm:space-y-6 px-2 sm:px-4">
         <div>
-          <h1 className="text-2xl font-semibold">{`${newVehicleData?.make} ${newVehicleData?.model} ${newVehicleData?.year}`}</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold">{`${newVehicleData?.make} ${newVehicleData?.model} ${newVehicleData?.year}`}</h1>
           {/* <p className="text-gray-600">{newVehicleData?.variant}</p> */}
           {/* <button className="text-blue-600 hover:underline mt-2">Edit vehicle details</button> */}
         </div>
+        
+        <div className="mx-auto space-y-4 sm:space-y-6">
         {/* <button className="text-blue-600 hover:underline">Add attention grabber</button> */}
         <div className='flex flex-col space-y-2'>
             <Input
@@ -592,13 +595,18 @@ const Advert: React.FC = () => {
             />
           </div>
           <div className='flex flex-col space-y-2'>
-            <label className="text-sm font-medium text-gray-700">Description</label>
-            <p className="text-gray-600">Cars with a detailed description sell quicker</p>
-            <textarea
-              value={newVehicleData?.description}
-              onChange={(e) => setNewVehicleData({ ...newVehicleData, description: e.target.value } as VehicleData)}
-              required
-              className="p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-80 overscroll-none"
+            <TextArea
+              label="Description"
+              description="Cars with a detailed description sell quicker"
+              name="description"
+              value={formik.values.description}
+              onChange={(e) => formik.handleChange(e)}
+              meta={{
+                valid: !Boolean(formik.errors.description),
+                error: formik.errors.description,
+                touched: formik.touched.description
+              }}
+              className="p-3 sm:p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32 sm:h-80 overscroll-none text-base sm:text-sm"
             />
           </div>
           <div className='flex flex-col space-y-2'>
@@ -716,13 +724,11 @@ const Advert: React.FC = () => {
             ))} */}
           </div>
         </div>
-
         {/* <div className="space-y-4">
           <h2 className="text-xl font-semibold">Description</h2>
           <p className="text-gray-600">You have not added a description yet. Cars with a detailed description sell quicker</p>
           <button className="text-blue-600 hover:underline">Add description</button>
         </div> */}
-
         {[
           { icon: Star, title: 'Vehicle features', chevron: true },
           { icon: Calculator, title: 'Running costs', chevron: true },
@@ -743,9 +749,10 @@ const Advert: React.FC = () => {
             {section.chevron && <ChevronRight className="w-5 h-5 text-gray-400" />}
           </button>
         ))}
-        <button type='submit'className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 mt-6">
+        <button type='submit' className="w-full bg-blue-600 text-white py-3 sm:py-4 rounded-md hover:bg-blue-700 mt-6 text-sm sm:text-base touch-manipulation min-h-[48px] sm:min-h-[auto]">
           I'm happy with my ad
         </button>
+        </div>
         <div className="flex justify-center py-8">
           <button
             onClick={scrollToTop}

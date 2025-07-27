@@ -16,7 +16,7 @@ const Select: React.FC<SelectProps> = ({ name, label, options, onChange, value, 
             <div className="relative inline-block w-full mb-2">
                 <label className="text-sm font-medium text-gray-700">{ label }</label>
                 <select
-                    className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline cursor-pointer"
+                    className={`block appearance-none w-full bg-white border px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline cursor-pointer ${ meta.error ? "input-error" : "input-normal"}`}
                     id={value}
                     value={value}
                     name={name}
@@ -35,7 +35,7 @@ const Select: React.FC<SelectProps> = ({ name, label, options, onChange, value, 
                     </svg>
                 </div>
             </div>
-            { meta && meta.touched && !meta.valid && <div id="form-error" className="text-red-500 text-sm">{ meta.error }</div> }
+            { meta && meta.touched && !meta.valid && <div id="form-error" className="error-message">{ meta.error }</div> }
         </div>
     );
 };
