@@ -36,7 +36,7 @@ const initialState: VehiclesState = {
     postcode: '',
     radius: 50,
     page: 1,
-    perPage: 20,
+    perPage: 1000,
   },
   loading: false,
   error: null,

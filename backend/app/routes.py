@@ -333,7 +333,7 @@ def search_vehicles():
     fuel_type = request.args.get('fuelType')
     body_type = request.args.get('bodyType')
     page = request.args.get('page', type=int, default=1)
-    per_page = request.args.get('perPage', type=int, default=20)
+    per_page = request.args.get('perPage', type=int, default=1000)
     
     query = Vehicle.query.filter_by(status='active')
     

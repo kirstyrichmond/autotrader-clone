@@ -26,7 +26,7 @@ const SearchResults = () => {
     dispatch(setFilters({
       radius: 'NATIONAL',
       page: 1,
-      perPage: 20,
+      perPage: 1000,
       fuelTypes: []
     }));
     scrollToTop();
@@ -37,7 +37,7 @@ const SearchResults = () => {
       postcode: '',
       radius: 50,
       page: 1,
-      perPage: 20,
+      perPage: 1000,
       fuelTypes: [],
       minPrice: undefined,
       maxPrice: undefined,
