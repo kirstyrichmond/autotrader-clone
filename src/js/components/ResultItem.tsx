@@ -5,6 +5,7 @@ import { addFavorite, removeFavorite } from "../../store/slices/favoritesSlice";
 import { openAuthModal } from "../../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
+import { formatCurrency, formatMileage } from "../utils/index";
 
 export interface Vehicle {
   id: number;
@@ -134,12 +135,12 @@ const ResultItem: React.FC<ResultItemProps> = ({ vehicle }) => {
             {year} ({year.slice(-2)} reg)
           </div>
           <div className="bg-gray-100 px-2 py-0.5 rounded">
-            {typeof mileage === 'number' ? mileage.toLocaleString() : mileage} miles
+            {formatMileage(mileage)}
           </div>
         </div>
         <div className="mt-3 flex flex-col">
           <div className="flex items-start gap-1 mb-1">
-            <span className="text-lg font-bold">£{price.toLocaleString()}</span>
+            <span className="text-lg font-bold">{formatCurrency(price)}</span>
           </div>
           <div className="text-xs text-gray-600">
             {location}

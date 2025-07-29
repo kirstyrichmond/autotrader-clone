@@ -11,6 +11,7 @@ import { Vehicle } from '@/components/ResultItem';
 import { addFavorite, fetchFavorites, removeFavorite } from '../../store/slices/favoritesSlice';
 import { createChat } from '../../store/slices/chatSlice';
 import { openAuthModal } from '../../store/slices/authSlice';
+import { formatCurrency, formatMileage } from '../utils/index';
 
 const CarDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -215,7 +216,7 @@ const CarDetails = () => {
             </div>
             <div className="flex flex-wrap gap-3">
               <span className="bg-gray-100 px-4 py-2 rounded-full text-sm">
-                {vehicle.mileage} miles
+                {formatMileage(vehicle.mileage)}
               </span>
               <span className="bg-gray-100 px-4 py-2 rounded-full text-sm">
                 {vehicle.year}
@@ -229,7 +230,7 @@ const CarDetails = () => {
             </div>
             <div className="">
               <div className="text-lg font-semibold mb-4">{vehicle.attention_grabber}</div>
-              <div className="text-4xl font-bold">£{vehicle.price}</div>
+              <div className="text-4xl font-bold">{formatCurrency(vehicle.price)}</div>
               <button 
                 onClick={startChat}
                 className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg mt-6 hover:bg-blue-700"
@@ -265,7 +266,7 @@ const CarDetails = () => {
             <h2 className="text-xl font-semibold mb-6">Vehicle details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { label: 'Mileage', value: `${vehicle.mileage} miles`, },
+                { label: 'Mileage', value: formatMileage(vehicle.mileage), },
                 { label: 'Year', value: vehicle.year },
                 { label: 'Fuel type', value: vehicle.fuel_type },
                 { label: 'Transmission', value: vehicle.transmission },

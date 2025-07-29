@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Plus, SlidersHorizontal } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { FilterState } from '../../../store/slices/vehiclesSlice';
+import { formatNumber } from '../../utils/index';
 
 interface FilterBarProps {
   filters: FilterState;
@@ -102,7 +102,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         </div>
           {totalResults && totalResults > 0 && (
           <div className="mb-2">
-            <span className="font-medium">{totalResults.toLocaleString()}</span> results
+            <span className="font-medium">{formatNumber(totalResults)}</span> results
           </div>
         )}
       </div>

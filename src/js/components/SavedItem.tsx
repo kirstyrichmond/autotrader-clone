@@ -5,6 +5,7 @@ import { ResultItemProps, Vehicle } from '@/components/ResultItem';
 import { Trash2 } from 'lucide-react';
 import { removeFavorite } from '../../store/slices/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency, formatMileage } from '../utils/index';
 
 const SavedItem: React.FC<ResultItemProps>  = ({vehicle}) => {
   const {
@@ -77,11 +78,11 @@ const SavedItem: React.FC<ResultItemProps>  = ({vehicle}) => {
       {/* Right side - Vehicle details */}
       <div className="w-full md:w-3/5 p-1">
         <div className="flex">
-            <span className="text-sm font-normal">£{price}</span>
+            <span className="text-sm font-normal">{formatCurrency(price)}</span>
         </div>
         <h2 className="text-base font-medium text-blue-600 pb-1">{make} {model}</h2>
         <div className="flex flex-wrap gap-1 text-gray-800 text-[10px] mb-4 font-base leading-[10px]">
-          <span>{mileage} miles</span>
+          <span>{formatMileage(mileage)}</span>
           <span>|</span>
           <span>{year}</span>
           <span>|</span>
