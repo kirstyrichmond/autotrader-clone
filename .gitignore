@@ -14,6 +14,14 @@ dist-ssr
 __pycache__/
 .env
 
+# Database files
+backend/instance/
+
+# Python virtual environment
+autotrader-clone/
+venv/
+env/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

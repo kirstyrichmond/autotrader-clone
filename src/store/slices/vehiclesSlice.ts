@@ -64,7 +64,12 @@ const vehiclesSlice = createSlice({
       state.filters.page = action.payload;
     },
     clearFilters: (state) => {
-      state.filters = initialState.filters;
+      state.filters = {
+        ...initialState.filters,
+        radius: 'NATIONAL'
+      };
+      state.totalResults = 0;
+      state.items = [];
     },
   },
   extraReducers: (builder) => {

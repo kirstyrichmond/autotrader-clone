@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { clearFilters } from "../../store/slices/vehiclesSlice";
+import { clearFilters, fetchVehicles } from "../../store/slices/vehiclesSlice";
 import VehicleSearchForm from "@/components/VehicleSearchForm";
 import bannerImage from "../../assets/images/banner.avif";
 import { AppDispatch } from "../../store";
@@ -10,6 +10,12 @@ export default function Main() {
 
   useEffect(() => {
     dispatch(clearFilters());
+    dispatch(fetchVehicles({
+      postcode: '',
+      radius: 'NATIONAL',
+      page: 1,
+      perPage: 1000
+    }));
   }, [dispatch]);
   return (
     <div>

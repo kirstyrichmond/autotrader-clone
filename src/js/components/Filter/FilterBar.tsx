@@ -49,7 +49,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <div className="sticky top-0 bg-white z-40">
-      <div className="mx-auto px-4 py-4">
+      <div className="mx-auto px-6 py-4">
         <div className="flex flex-wrap items-center gap-2">
           {activeFilters.map(([key, value]) => (
             <button
@@ -101,7 +101,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
         </div>
           {totalResults && totalResults > 0 && (
-          <div className="mb-2">
+          <div className="px-2 pt-4">
             <span className="font-medium">{formatNumber(totalResults)}</span> results
           </div>
         )}

@@ -12,39 +12,72 @@ https://autotrader-clone.vercel.app/
 
 ### Prerequisites
 - Node.js (v16 or higher)
-- Python 3.9 or higher
+- Python 3.11 or higher
 - Git
+- Homebrew (macOS)
 
 ### Backend Setup
 
-1. **Clone the repository**
+#### Quick Start (Recommended)
+
+**First time setup:**
+```bash
+# Clone the repository
+$ git clone <repository-url>
+$ cd autotrader-clone
+
+# Setup virtual environment, install dependencies, seed database and start server
+$ source setup_venv.sh all
+```
+
+**Daily development:**
+```bash
+# Just start the server (assumes venv is already set up)
+$ source backend.sh run
+
+# Or seed database + start server
+$ source backend.sh all
+```
+
+#### Available Scripts
+
+**setup_venv.sh** - Full setup (rebuilds virtual environment)
+- `source setup_venv.sh` - Setup virtual environment only
+- `source setup_venv.sh seed` - Setup + seed database
+- `source setup_venv.sh run` - Setup + start server
+- `source setup_venv.sh all` - Setup + seed + start server
+
+**backend.sh** - Quick commands (uses existing virtual environment)
+- `source backend.sh` - Activate virtual environment
+- `source backend.sh seed` - Activate + seed database
+- `source backend.sh run` - Activate + start server
+- `source backend.sh all` - Activate + seed + start server
+
+#### Manual Setup (Alternative)
+
+1. **Create and activate Python virtual environment**
    ```bash
-   $ git clone <repository-url>
-   $ cd autotrader-clone
+   $ python3.11 -m venv autotrader-clone
+   $ source autotrader-clone/bin/activate
    ```
 
-2. **Create and activate Python virtual environment**
-   ```bash
-   $ python3 -m venv autotrader-clone
-   $ source autotrader-clone/bin/activate  # On Windows: autotrader-clone\Scripts\activate
-   ```
-
-3. **Install Python dependencies**
+2. **Install Python dependencies**
    ```bash
    $ cd backend
    $ pip install -r requirements.txt
    ```
 
-4. **Initialize the database**
+3. **Initialize the database**
    ```bash
-   $ python3 seed_data.py
+   $ python seed_data.py
    ```
 
-5. **Start the Flask backend**
+4. **Start the Flask backend**
    ```bash
-   $ python3 run.py
+   $ python run.py
    ```
-   The backend will run on `http://localhost:5000`
+
+The backend will run on `http://localhost:5000`
 
 ### Frontend Setup
 

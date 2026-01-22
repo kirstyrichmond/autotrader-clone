@@ -1,5 +1,6 @@
 from app import create_app, db
 from app.models import Vehicle, User
+from app.utils import get_postcode_coordinates
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash
 
@@ -38,11 +39,7 @@ def seed_database():
                 'transmission': 'Automatic',
                 'body_type': 'Saloon',
                 'colour': 'Black',
-                'location': 'London',
-                'postcode': 'SE17PB',
-                'description': '320i M Sport, Full Service History',
-                'latitude': 51.5825,
-                'longitude': -0.113504,
+                'postcode': 'SE1 7PB',
                 'images': [
                     {
                         'url': 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -84,13 +81,9 @@ def seed_database():
                 'transmission': 'Automatic',
                 'body_type': 'Saloon',
                 'attention_grabber': 'Buy this now!',
-                'description': 'skdhfkjshdfkjhsdkjfhjksdhfjksdf sdjfhksjdhfkjsdhfkjsdhf ksjdhfkjshdfkjshdf',
-                'colour': 'Silver',
-                'location': 'Manchester',
-                'postcode': 'M1 1AE',
                 'description': '2.0 TDI S Line, Navigation Plus',
-                'latitude': 51.5825,
-                'longitude': -0.113504,
+                'colour': 'Silver',
+                'postcode': 'M1 1AD',
                 'images': [
                     {
                         'url': 'https://images.unsplash.com/photo-1606220838315-056192d5e927?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -130,11 +123,8 @@ def seed_database():
                 'transmission': 'Automatic',
                 'body_type': 'Saloon',
                 'colour': 'White',
-                'location': 'Birmingham',
-                'postcode': 'B1 1BB',
+                'postcode': 'B1 1AA',
                 'description': 'C200 AMG Line Premium Plus',
-                'latitude': 51.5825,
-                'longitude': -0.113504,
                 'images': [
                     {
                         'url': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -163,7 +153,17 @@ def seed_database():
                 'mot_due': date(2025, 8, 27), 
             },
         ]
-        
+
+        for vehicle in vehicles:
+            coords = get_postcode_coordinates(vehicle['postcode'])
+            if coords:
+                vehicle['latitude'], vehicle['longitude'], vehicle['location'] = coords
+            else:
+                vehicle['latitude'] = 51.5074
+                vehicle['longitude'] = -0.1278
+                if 'location' not in vehicle:
+                    vehicle['location'] = 'London'
+
         import random
         makes_models = [
             ('Ford', 'Focus'), ('Ford', 'Fiesta'), ('Ford', 'Mondeo'), ('Ford', 'Kuga'), ('Ford', 'Mustang'),
@@ -179,29 +179,75 @@ def seed_database():
         ]
         
         car_images = [
-            'https://m.atcdn.co.uk/a/media/w1024/71084bc77e88403b806d638bb6425bca.jpg',
-            'https://m.atcdn.co.uk/a/media/w1024/029ef8db0964456da1296128e3785771.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/f668e11f61b74e4a8cfbc8a807d8cbd0.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/d2256a9003f34ed18325851d4e06bcae.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/b97b4aa46b3b42268ef9592964c0bca8.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/a15c273987314e868c0bbdd7c180e0f4.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/150d8bf5c0a2473489116b2611ae6d90.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/d6eee67d836741ffb6c3609d52956a5b.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/5a075ccedabe41abad4792767f0aa7e9.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/cebf45def1824d47965e0c32c3527ba1.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/b7946e891c974f4f9c10a90ee0995c5b.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/6e3c15f5fefe45559ca606370ffed319.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/ad874cea8e9b456d9c4d17fd56cbc986.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/62c7481f23054a1f9b9f46be363a26ed.jpg',
-            'https://m.atcdn.co.uk/a/media/w480/c13a518b984e48d4bf9ec0664a56a28e.jpg'
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1606220838315-056192d5e927?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1581540222194-0def2dda95b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
         ]
         
         fuel_types = ['Petrol', 'Diesel', 'Hybrid', 'Electric']
         transmissions = ['Manual', 'Automatic']
         body_types = ['Hatchback', 'Saloon', 'Estate', 'SUV', 'Coupe', 'Convertible']
         colours = ['Black', 'White', 'Silver', 'Blue', 'Red', 'Grey', 'Green', 'Yellow', 'Orange', 'Purple']
-        locations = ['London', 'Manchester', 'Birmingham', 'Leeds', 'Glasgow', 'Sheffield', 'Bradford', 'Liverpool', 'Edinburgh', 'Bristol']
-        postcodes = ['M1 1AA', 'B1 1BB', 'LS1 1CC', 'G1 1DD', 'S1 1EE', 'BD1 1FF', 'L1 1GG', 'EH1 1HH', 'BS1 1II', 'SE1 7PB']
+
+        location_postcodes = [
+            ('SE1 7PB', 'London'),
+            ('M1 1AD', 'Manchester'),
+            ('B1 1AA', 'Birmingham'),
+            ('LS1 1UR', 'Leeds'),
+            ('G1 1AA', 'Glasgow'),
+            ('S1 2JE', 'Sheffield'),
+            ('BD1 1EE', 'Bradford'),
+            ('L1 8JQ', 'Liverpool'),
+            ('EH1 1YZ', 'Edinburgh'),
+            ('BS1 4DJ', 'Bristol'),
+            ('SW1A 1AA', 'London'),
+            ('M2 5DB', 'Manchester'),
+            ('B2 4QA', 'Birmingham'),
+            ('LS2 7EX', 'Leeds'),
+            ('G2 1DY', 'Glasgow'),
+            ('S2 4SU', 'Sheffield'),
+            ('L3 9AG', 'Liverpool'),
+            ('EH2 2BD', 'Edinburgh'),
+            ('BS2 0JA', 'Bristol'),
+            ('NE1 4ST', 'Newcastle'),
+            ('NG1 5FS', 'Nottingham'),
+            ('CV1 1FH', 'Coventry'),
+            ('LE1 5YA', 'Leicester'),
+            ('SO14 2AJ', 'Southampton'),
+            ('PL1 2AA', 'Plymouth'),
+            ('CF10 1EP', 'Cardiff'),
+            ('OX1 1DP', 'Oxford'),
+            ('CB1 1PT', 'Cambridge'),
+            ('BN1 1AL', 'Brighton'),
+            ('BH1 1EB', 'Bournemouth'),
+            ('NR1 1RE', 'Norwich'),
+            ('IP1 1DJ', 'Ipswich'),
+            ('CT1 1BE', 'Canterbury'),
+            ('ME4 4UY', 'Chatham'),
+            ('GU1 3UW', 'Guildford'),
+            ('RG1 1AZ', 'Reading'),
+            ('SL1 1DH', 'Slough'),
+            ('LU1 2TL', 'Luton'),
+            ('MK9 2FH', 'Milton Keynes'),
+            ('NN1 1NS', 'Northampton'),
+            ('PE1 1XA', 'Peterborough'),
+            ('CB4 1RS', 'Cambridge'),
+            ('HP1 1AA', 'Hemel Hempstead'),
+            ('AL1 2RJ', 'St Albans'),
+            ('WD17 1DY', 'Watford'),
+            ('EN1 1YQ', 'Enfield'),
+            ('RM1 3BD', 'Romford'),
+            ('DA1 1DP', 'Dartford'),
+            ('TN9 1SF', 'Tonbridge'),
+            ('ME14 1XX', 'Maidstone'),
+            ('TW9 1DX', 'Richmond'),
+            ('KT1 1PE', 'Kingston'),
+            ('CR0 1LP', 'Croydon'),
+        ]
         conditions = ['New', 'Used', 'Nearly New']
         service_histories = ['Full', 'Partial', 'None']
         dealer_names = ['AutoMax', 'CarWorld', 'DriveTime', 'MotorHub', 'VehiclePlus', 'CarCenter', 'AutoDealer', 'CarSales']
@@ -209,9 +255,17 @@ def seed_database():
         for i in range(50):
             make, model = random.choice(makes_models)
             user = random.choice(users)
-            location = random.choice(locations)
-            postcode = random.choice(postcodes)
-            
+            postcode, location = location_postcodes[i + 3]
+
+            coords = get_postcode_coordinates(postcode)
+            if coords:
+                vehicle_lat, vehicle_lon, vehicle_location = coords
+            else:
+                print(f"Warning: Could not get coordinates for {postcode}")
+                vehicle_lat = 51.5074
+                vehicle_lon = -0.1278
+                vehicle_location = location
+
             vehicle_data = {
                 'user_id': user.id,
                 'id': i + 4,
@@ -224,11 +278,11 @@ def seed_database():
                 'transmission': random.choice(transmissions),
                 'body_type': random.choice(body_types),
                 'colour': random.choice(colours),
-                'location': location,
+                'location': vehicle_location,
                 'postcode': postcode,
                 'description': f'Excellent {make} {model} in great condition. Well maintained vehicle.',
-                'latitude': round(random.uniform(50.5, 55.5), 6),
-                'longitude': round(random.uniform(-4.5, 1.5), 6),
+                'latitude': vehicle_lat,
+                'longitude': vehicle_lon,
                 'images': [
                     {
                         'url': random.choice(car_images),
