@@ -10,8 +10,8 @@ const MenuNav: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
     const menuItems = [
-        { name: "Used cars", path: "/" },
-        { name: "New cars", path: "/" },
+        { name: "Used cars", path: "/search?radius=NATIONAL&page=1&perPage=1000" },
+        { name: "New cars", path: "/search?radius=NATIONAL&page=1&perPage=1000" },
         { name: "Sell your car", path: "/selling/find-car", requiresAuth: true },
         // { name: "Value your car", path: "/" },
         // { name: "Car reviews", path: "/" },
