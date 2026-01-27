@@ -7,6 +7,7 @@ export interface FilterState {
   radius: number | 'NATIONAL';
   page: number;
   perPage: number;
+  sortBy?: string;
   make?: string;
   model?: string;
   minPrice?: number;
@@ -15,8 +16,8 @@ export interface FilterState {
   maxYear?: number;
   minMileage?: number;
   maxMileage?: number;
-  transmission?: string;
-  fuelTypes?: string[];
+  transmission?: string[];
+  fuelType?: string[];
   bodyType?: string;
 }
 
@@ -37,6 +38,9 @@ const initialState: VehiclesState = {
     radius: 50,
     page: 1,
     perPage: 1000,
+    sortBy: 'relevance',
+    transmission: [],
+    fuelType: [],
   },
   loading: false,
   error: null,
@@ -66,7 +70,9 @@ const vehiclesSlice = createSlice({
     clearFilters: (state) => {
       state.filters = {
         ...initialState.filters,
-        radius: 'NATIONAL'
+        radius: 'NATIONAL',
+        fuelType: [],
+        transmission: [],
       };
       state.totalResults = 0;
       state.items = [];

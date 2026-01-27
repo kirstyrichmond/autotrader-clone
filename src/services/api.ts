@@ -3,6 +3,7 @@ import { Vehicle } from "@/components/ResultItem";
 interface SearchFilters {
   postcode?: string;
   radius?: number | 'NATIONAL';
+  sortBy?: string;
   make?: string;
   model?: string;
   minPrice?: number;
@@ -11,7 +12,7 @@ interface SearchFilters {
   maxYear?: number;
   minMileage?: number;
   maxMileage?: number;
-  transmission?: string;
+  transmission?: string[];
   fuelType?: string[];
   bodyType?: string;
   page?: number;
@@ -34,10 +35,11 @@ const searchVehicles = async (filters: SearchFilters): Promise<SearchResponse> =
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== '') {
-      if (filters.radius === 'NATIONAL' && (key === 'radius' || key === 'postcode')) {
-        return;
+      if (Array.isArray(value)) {
+        params.append(key, value.join(','));
+      } else {
+        params.append(key, value.toString());
       }
-      params.append(key, value.toString());
     }
   });
 

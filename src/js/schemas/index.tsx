@@ -10,7 +10,7 @@ const validatePostcode = (value?: string): boolean => {
 };
 
 export const searchFiltersSchema = yup.object().shape({
-  postcode: yup.string().required('Required').test('postcode', 'Please enter a valid UK postcode (e.g., M1 1AA)', validatePostcode),
+  postcode: yup.string().test('postcode', 'Please enter a valid UK postcode (e.g., M1 1AA)', validatePostcode),
   radius: yup.mixed().test('radius', 'Invalid radius value', (value) => {
     return value === 'NATIONAL' || (typeof value === 'number' && value >= 1 && value <= 500);
   }),
@@ -22,9 +22,10 @@ export const searchFiltersSchema = yup.object().shape({
   maxYear: yup.number().max(new Date().getFullYear() + 1),
   minMileage: yup.number().min(0),
   maxMileage: yup.number().min(0),
-  transmission: yup.string(),
+  transmission: yup.array().of(yup.string()),
   fuelType: yup.array().of(yup.string()),
   bodyType: yup.string(),
+  sortBy: yup.string(),
 });
 
 export const findCarSchema = yup.object().shape({

@@ -32,7 +32,7 @@ class Vehicle(db.Model):
     make = db.Column(db.String)
     model = db.Column(db.String)
     year = db.Column(db.String)
-    mileage = db.Column(db.String)
+    mileage = db.Column(db.Integer)
     fuel_type = db.Column(db.String)
     body_type = db.Column(db.String)
     transmission = db.Column(db.String)

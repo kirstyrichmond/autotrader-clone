@@ -77,7 +77,7 @@ const VehicleSearchForm = () => {
               <h2 className="text-lg font-semibold text-blue-800">Find Your Perfect Car</h2>
             </div> */}
             <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-              <Distance immediateFilter={false} />
+              <Distance />
               <button
                 type="submit"
                 disabled={loading}

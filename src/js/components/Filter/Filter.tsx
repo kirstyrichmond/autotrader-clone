@@ -25,6 +25,7 @@ import Year from "./Components/Year";
 import Mileage from "./Components/Mileage";
 import Gearbox from "./Components/Gearbox";
 import FuelType from "./Components/FuelType";
+import Sort from "./Components/Sort";
 
 export type FiltersProps = {
   label: string;
@@ -33,14 +34,20 @@ export type FiltersProps = {
   component?: React.FC;
 }
 
-const Filter = () => {
+interface Props {
+  onSubmit?: (values: any) => void;
+  activeAccordion?: string;
+}
+
+const Filter: React.FC<Props> = ({ onSubmit, activeAccordion }) => {
   const filters = useSelector((state: RootState) => state.vehicles.filters);
 
   const filterItems = [
     {
       label: "Sort",
       value: "",
-      icon: ArrowDownUp
+      icon: ArrowDownUp,
+      component: Sort
     },
     {
       label: "Distance from you",
@@ -48,11 +55,11 @@ const Filter = () => {
       icon: MapPin,
       component: Distance
     },
-    {
-      label: "Make and model",
-      value: "",
-      icon: Car
-    },
+    // {
+    //   label: "Make and model",
+    //   value: "",
+    //   icon: Car
+    // },
     {
       label: "Price",
       value: "",
@@ -77,49 +84,57 @@ const Filter = () => {
       icon: Cog,
       component: Gearbox
     },
-    {
-      label: "Body type",
-      value: "",
-      icon: Square
-    },
-    {
-      label: "Colour",
-      value: "",
-      icon: Palette
-    },
-    {
-      label: "Seats",
-      value: "",
-      icon: Users
-    },
+    // {
+    //   label: "Body type",
+    //   value: "",
+    //   icon: Square
+    // },
+    // {
+    //   label: "Colour",
+    //   value: "",
+    //   icon: Palette
+    // },
+    // {
+    //   label: "Seats",
+    //   value: "",
+    //   icon: Users
+    // },
     {
       label: "Fuel type",
       value: "",
       icon: Fuel,
       component: FuelType
     },
-    {
-      label: "Engine power",
-      value: "",
-      icon: Power
-    }
+    // {
+    //   label: "Engine power",
+    //   value: "",
+    //   icon: Power
+    // }
   ];
   
   return (
     <Formik
       initialValues={filters}
       validationSchema={searchFiltersSchema}
-      onSubmit={ () => {
-      } }
+      onSubmit={(values) => {
+        if (onSubmit) {
+          onSubmit(values);
+        }
+      }}
       enableReinitialize
     >
-      <Form>
-        {filterItems.map((filter, index) => (
-          <div key={index} className="border-b border-slate-200">
-            <AccordionItem item={filter} />
-          </div>
-        ))}
-      </Form>
+      {() => (
+        <Form id="filter-form">
+          {filterItems.map((filter, index) => (
+            <div key={index} className="border-b border-slate-200">
+              <AccordionItem
+                item={filter}
+                defaultOpen={activeAccordion === filter.label}
+              />
+            </div>
+          ))}
+        </Form>
+      )}
     </Formik>
   );
 };

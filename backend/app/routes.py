@@ -320,7 +320,8 @@ def update_vehicle(vehicle_id):
 @api.route("/vehicles/search")
 def search_vehicles():
     postcode = request.args.get('postcode')
-    radius = request.args.get('radius', type=int, default=50)
+    radius_param = request.args.get('radius', default='50')
+    radius = radius_param if radius_param == 'NATIONAL' else int(radius_param)
     make = request.args.get('make')
     model = request.args.get('model')
     min_price = request.args.get('minPrice', type=float)
@@ -332,6 +333,7 @@ def search_vehicles():
     transmission = request.args.get('transmission')
     fuel_type = request.args.get('fuelType')
     body_type = request.args.get('bodyType')
+    sort_by = request.args.get('sortBy', default='relevance')
     page = request.args.get('page', type=int, default=1)
     per_page = request.args.get('perPage', type=int, default=1000)
     
@@ -341,22 +343,24 @@ def search_vehicles():
         query = query.filter(Vehicle.make.ilike(f'%{make}%'))
     if model:
         query = query.filter(Vehicle.model.ilike(f'%{model}%'))
-    if min_price:
+    if min_price is not None:
         query = query.filter(Vehicle.price >= min_price)
-    if max_price:
+    if max_price is not None:
         query = query.filter(Vehicle.price <= max_price)
     if min_year:
         query = query.filter(Vehicle.year >= min_year)
     if max_year:
         query = query.filter(Vehicle.year <= max_year)
-    if min_mileage:
+    if min_mileage is not None:
         query = query.filter(Vehicle.mileage >= min_mileage)
-    if max_mileage:
+    if max_mileage is not None:
         query = query.filter(Vehicle.mileage <= max_mileage)
     if transmission:
-        query = query.filter(Vehicle.transmission == transmission)
+        transmission_list = transmission.split(',')
+        query = query.filter(Vehicle.transmission.in_(transmission_list))
     if fuel_type:
-        query = query.filter(Vehicle.fuel_type == fuel_type)
+        fuel_type_list = fuel_type.split(',')
+        query = query.filter(Vehicle.fuel_type.in_(fuel_type_list))
     if body_type:
         query = query.filter(Vehicle.body_type == body_type)
     
@@ -375,8 +379,8 @@ def search_vehicles():
                 user_lat, user_lon,
                 vehicle.latitude, vehicle.longitude
             )
-            
-            if distance <= radius:
+
+            if radius == 'NATIONAL' or distance <= radius:
                 results.append({
                     'id': vehicle.id,
                     'user_id': vehicle.user_id,
@@ -403,10 +407,23 @@ def search_vehicles():
                     'distance': round(distance, 1)
                 })
         
-        # Sort results by distance
-        results.sort(key=lambda x: x['distance'])
-        
-        # Implement pagination
+        if sort_by == 'price_asc':
+            results.sort(key=lambda x: x['price'])
+        elif sort_by == 'price_desc':
+            results.sort(key=lambda x: x['price'], reverse=True)
+        elif sort_by == 'distance':
+            results.sort(key=lambda x: x['distance'])
+        elif sort_by == 'mileage':
+            results.sort(key=lambda x: x['mileage'])
+        elif sort_by == 'year_desc':
+            results.sort(key=lambda x: int(x['year']), reverse=True)
+        elif sort_by == 'year_asc':
+            results.sort(key=lambda x: int(x['year']))
+        elif sort_by == 'recent':
+            results.sort(key=lambda x: x['id'], reverse=True)
+        else:
+            results.sort(key=lambda x: x['distance'])
+
         start = (page - 1) * per_page
         end = start + per_page
         paginated_results = results[start:end]
@@ -419,7 +436,21 @@ def search_vehicles():
             'total_pages': (len(results) + per_page - 1) // per_page
         })
     
-    # If no postcode, just return paginated results
+    if sort_by == 'price_asc':
+        query = query.order_by(Vehicle.price.asc())
+    elif sort_by == 'price_desc':
+        query = query.order_by(Vehicle.price.desc())
+    elif sort_by == 'mileage':
+        query = query.order_by(Vehicle.mileage.asc())
+    elif sort_by == 'year_desc':
+        query = query.order_by(Vehicle.year.desc())
+    elif sort_by == 'year_asc':
+        query = query.order_by(Vehicle.year.asc())
+    elif sort_by == 'recent':
+        query = query.order_by(Vehicle.id.desc())
+    else:
+        query = query.order_by(Vehicle.id.desc())
+
     total = query.count()
     vehicles = query.paginate(page=page, per_page=per_page)
     

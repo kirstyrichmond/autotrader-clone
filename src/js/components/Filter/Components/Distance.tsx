@@ -1,20 +1,9 @@
 import React from 'react';
-import { useFilters } from '@/hooks/useFilters';
 import { useFormikContext } from 'formik';
 import Input from '../../Input';
 import { FilterState } from '../../../../store/slices/vehiclesSlice';
 
-interface DistanceProps {
-  immediateFilter?: boolean;
-}
-
-const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
-  const { 
-    filters,
-    handleFilterChangeOnly,
-    handleImmediateFilterChange
-  } = useFilters();
-
+const Distance: React.FC = () => {
   const formik = useFormikContext<FilterState>();
 
   return (
@@ -31,7 +20,6 @@ const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
           value={formik.values.postcode || ''}
           onChange={(e) => {
             formik.setFieldValue('postcode', e.target.value);
-            handleFilterChangeOnly('postcode', e.target.value);
           }}
           meta={{
             valid: !Boolean(formik.errors.postcode),
@@ -45,12 +33,10 @@ const Distance: React.FC<DistanceProps> = ({ immediateFilter = true }) => {
           Search Distance
         </label>
         <select
-          value={filters?.radius || 50}
+          value={formik.values.radius}
           onChange={(e) => {
             const value = e.target.value === 'NATIONAL' ? 'NATIONAL' : Number(e.target.value);
-            return immediateFilter 
-              ? handleImmediateFilterChange('radius', value)
-              : handleFilterChangeOnly('radius', value);
+            formik.setFieldValue('radius', value);
           }}
           className="
             w-full p-3 sm:p-2 border border-gray-300 rounded-lg text-base sm:text-sm

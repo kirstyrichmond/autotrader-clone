@@ -1,43 +1,37 @@
-import React from 'react';
-import { useFilters } from '@/hooks/useFilters';
 import { Check } from 'lucide-react';
+import { useFormikContext } from 'formik';
+import { FilterState } from 'src/store/slices/vehiclesSlice';
 
 interface FuelTypeOption {
   label: string;
   value: string;
-  count: number;
 }
 
 const FuelType = () => {
-  const { filters, handleMultipleFilterChange } = useFilters();
+  const formik = useFormikContext<FilterState>();
 
   const fuelTypes: FuelTypeOption[] = [
-    { label: 'Petrol', value: 'Petrol', count: 227283 },
-    { label: 'Diesel', value: 'Diesel', count: 118941 },
-    { label: 'Electric', value: 'Electric', count: 28796 },
-    { label: 'Hybrid', value: 'Hybrid', count: 65434 },
-    { label: 'Bi Fuel', value: 'Bi Fuel', count: 301 },
-    { label: 'Electric/Petrol Range Ext', value: 'Elec/pet Range Ext', count: 4 },
-    { label: 'Hydrogen', value: 'Hydrogen', count: 2 },
-    { label: 'Natural Gas', value: 'Natural Gas', count: 1 }
+    { label: 'Petrol', value: 'Petrol' },
+    { label: 'Diesel', value: 'Diesel' },
+    { label: 'Electric', value: 'Electric' },
   ];
 
-  const selectedFuelTypes = Array.isArray(filters.fuelTypes) ? filters.fuelTypes : [];
+  const selectedFuelTypes = Array.isArray(formik.values.fuelType) ? formik.values.fuelType : [];
 
   const handleCheckboxClick = (typeValue: string) => {
     let newValues: string[];
-    
+
     if (selectedFuelTypes.includes(typeValue)) {
       newValues = selectedFuelTypes.filter(type => type !== typeValue);
     } else {
       newValues = [...selectedFuelTypes, typeValue];
     }
-    
-    handleMultipleFilterChange('fuelTypes', newValues);
+
+    formik.setFieldValue('fuelType', newValues);
   };
 
   const clearAll = () => {
-    handleMultipleFilterChange('fuelTypes', []);
+    formik.setFieldValue('fuelType', []);
   };
 
   return (
@@ -61,7 +55,6 @@ const FuelType = () => {
             </div>
             <span>{type.label}</span>
           </div>
-          <span className="text-gray-500 text-sm">{type.count.toLocaleString()}</span>
         </div>
       ))}
       

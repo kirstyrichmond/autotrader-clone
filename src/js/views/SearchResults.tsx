@@ -13,22 +13,29 @@ const SearchResults = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [pendingFilters, setPendingFilters] = useState<FilterState | null>(null);
+  const [activeAccordion, setActiveAccordion] = useState<string | undefined>(undefined);
   const resultsRef = useRef<HTMLDivElement>(null);
-  
+
   const { items: vehicles, loading, error, totalResults, filters } = useSelector(
     (state: RootState) => state.vehicles
   );
-  
+
   const userId = useSelector((state: RootState) => state.auth.user?.id);
 
   const handleClearAll = () => {
-    dispatch(setFilters({
-      radius: 'NATIONAL',
-      page: 1,
-      perPage: 1000,
-      fuelTypes: []
-    }));
+    const params = new URLSearchParams();
+    if (filters.postcode) {
+      params.set('postcode', filters.postcode);
+    }
+    params.set('radius', 'NATIONAL');
+    params.set('sortBy', 'relevance');
+    params.set('page', '1');
+    params.set('perPage', '1000');
+
+    navigate({
+      pathname: '/search',
+      search: params.toString()
+    });
     scrollToTop();
   };
 
@@ -38,22 +45,23 @@ const SearchResults = () => {
       radius: 50,
       page: 1,
       perPage: 1000,
-      fuelTypes: [],
+      sortBy: 'relevance',
+      fuelType: [],
+      transmission: [],
       minPrice: undefined,
       maxPrice: undefined,
       minYear: undefined,
       maxYear: undefined,
       minMileage: undefined,
       maxMileage: undefined,
-      transmission: undefined,
       bodyType: undefined,
       make: undefined,
       model: undefined
     };
 
     searchParams.forEach((value, key) => {
-      if (key === 'fuelTypes') {
-        baseFilters.fuelTypes = value ? value.split(',') : [];
+      if (key === 'fuelType' || key === 'transmission') {
+        baseFilters[key] = value ? value.split(',') : [];
       } else if (['minPrice', 'maxPrice', 'minYear', 'maxYear', 'minMileage', 'maxMileage', 'page', 'perPage'].includes(key)) {
         (baseFilters as any)[key] = value ? Number(value) : undefined;
       } else if (key === 'radius') {
@@ -64,7 +72,6 @@ const SearchResults = () => {
     });
 
     dispatch(setFilters(baseFilters));
-    setPendingFilters(baseFilters);
 
     if (baseFilters.postcode || searchParams.size > 0) {
       dispatch(fetchVehicles(baseFilters));
@@ -77,38 +84,39 @@ const SearchResults = () => {
     }
   }, [userId, dispatch]);
 
-  const handleRemoveFilter = (key: keyof FilterState) => {
-    const newFilters = { ...filters };
-    if (key === 'fuelTypes') {
-      newFilters.fuelTypes = [];
-    } else if (key === 'radius') {
-      newFilters.radius = 'NATIONAL';
-    } else {
-      (newFilters as any)[key] = undefined;
-    }
-    
-    const params = new URLSearchParams(searchParams);
-    if (key === 'radius') {
-      params.set('radius', 'NATIONAL');
-    } else {
-      params.delete(key);
-    }
-    
+  const handleSearch = (searchFilters: FilterState) => {
+    dispatch(setFilters(searchFilters));
+
+    const params = new URLSearchParams();
+    Object.entries(searchFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            params.set(key, value.join(','));
+          }
+        } else if (value !== 0 || key === 'minPrice') {
+          params.set(key, value.toString());
+        }
+      }
+    });
+
     navigate({
       pathname: '/search',
       search: params.toString()
     });
-    
-    dispatch(setFilters(newFilters));
-    dispatch(fetchVehicles(newFilters));
+
+    dispatch(fetchVehicles(searchFilters));
     scrollToTop();
   };
 
-  const handleSearch = () => {
-    if (pendingFilters) {
-      dispatch(fetchVehicles(pendingFilters));
-      scrollToTop();
-    }
+  const handleOpenFilters = (filterKey?: string) => {
+    setActiveAccordion(filterKey);
+    setIsFilterOpen(true);
+  };
+
+  const handleCloseFilters = () => {
+    setIsFilterOpen(false);
+    setActiveAccordion(undefined);
   };
 
   const scrollToTop = () => {
@@ -119,25 +127,25 @@ const SearchResults = () => {
     <div ref={resultsRef}>
       <FilterBar
         filters={filters}
-        onOpenFilters={() => setIsFilterOpen(true)}
-        onRemoveFilter={handleRemoveFilter}
+        onOpenFilters={handleOpenFilters}
         onClearAll={handleClearAll}
         totalResults={totalResults}
       />
       <div className="mx-auto px-4 py-4">
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
-        {vehicles.length > 0 && <Results vehicles={vehicles} />}
-        {!loading && !vehicles.length && (
+        {(vehicles.length > 0) && <Results vehicles={vehicles} />}
+        {!loading && !(vehicles.length > 0) && (
           <div className="p-4 bg-white rounded shadow">
             <p>No vehicles found matching your criteria</p>
           </div>
         )}
       </div>
-      <FilterDialog 
+      <FilterDialog
         isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
+        onClose={handleCloseFilters}
         onSearch={handleSearch}
+        activeAccordion={activeAccordion}
       />
     </div>
   );

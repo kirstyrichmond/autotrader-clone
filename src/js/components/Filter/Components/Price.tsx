@@ -1,8 +1,8 @@
-import React from 'react';
-import { useFilters } from '@/hooks/useFilters';
+import { useFormikContext } from 'formik';
+import { FilterState } from 'src/store/slices/vehiclesSlice';
 
 const Price = () => {
-  const { localFilters, handleFilterChange, handleImmediateFilterChange } = useFilters();
+  const formik = useFormikContext<FilterState>();
 
   const priceOptions = [
     {
@@ -208,27 +208,31 @@ const Price = () => {
   ]
 
   return (
-    <div className="">
-      <label className="">From</label>
-      <select
-        value={localFilters?.minPrice}
-        onChange={(e) => handleImmediateFilterChange('minPrice', e.target.value)}
-        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {priceOptions.map((option, index) => (
-          <option key={index} value={option.value}>{option.label}</option>
-        ))}
-      </select>
-      <label className="py-1">To</label>
-      <select
-        value={localFilters?.maxPrice}
-        onChange={(e) => handleImmediateFilterChange('maxPrice', e.target.value)}
-        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {priceOptions.map((option, index) => (
-          <option key={index} value={option.value}>{option.label}</option>
-        ))}
-      </select>
+    <div className="flex justify-between">
+      <div className="w-[calc(50%-8px)]">
+        <label className="">From</label>
+        <select
+          value={formik.values.minPrice}
+          onChange={(e) => formik.setFieldValue('minPrice', e.target.value)}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {priceOptions.map((option, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
+      <div className="w-[calc(50%-8px)]">
+        <label className="py-1">To</label>
+        <select
+          value={formik.values.maxPrice}
+          onChange={(e) => formik.setFieldValue('maxPrice', e.target.value)}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {priceOptions.map((option, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,8 @@
-import React from 'react';
-import { useFilters } from '@/hooks/useFilters';
-import dayjs from 'dayjs';
+import { useFormikContext } from 'formik';
+import { FilterState } from 'src/store/slices/vehiclesSlice';
 
 const Mileage = () => {
-  const { localFilters, handleImmediateFilterChange } = useFilters();
+  const formik = useFormikContext<FilterState>();
 
   const mileageOptions = [
     {
@@ -93,29 +92,33 @@ const Mileage = () => {
   ]
 
   return (
-    <div className="">
-      <label className="pb-1">From</label>
-      <select
-        value={localFilters?.minMileage}
-        onChange={(e) => handleImmediateFilterChange('minMileage', e.target.value)}
-        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {/* <option value={0}>Any</option> */}
-        {mileageOptions.map((option, index) => (
-          <option key={index} value={option.value}>{option.label}</option>
-        ))}
-      </select>
-      <label>To</label>
-      <select
-        value={localFilters?.maxMileage}
-        onChange={(e) => handleImmediateFilterChange('maxMileage', e.target.value)}
-        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {/* <option value={250000}>Any</option> */}
-        {mileageOptions.map((option, index) => (
-          <option key={index} value={option.value}>{option.label}</option>
-        ))}
-      </select>
+    <div className="flex justify-between">
+      <div className="w-[calc(50%-8px)]">
+        <label className="pb-1">From</label>
+        <select
+          value={formik.values.minMileage}
+          onChange={(e) => formik.setFieldValue('minMileage', Number(e.target.value))}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value={0}>Any</option>
+          {mileageOptions.map((option, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
+      <div className="w-[calc(50%-8px)]">
+        <label>To</label>
+        <select
+          value={formik.values.maxMileage}
+          onChange={(e) => formik.setFieldValue('maxMileage', Number(e.target.value))}
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value={250000}>Any</option>
+          {mileageOptions.map((option, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
