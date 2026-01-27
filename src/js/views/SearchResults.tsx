@@ -84,6 +84,10 @@ const SearchResults = () => {
     }
   }, [userId, dispatch]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleSearch = (searchFilters: FilterState) => {
     dispatch(setFilters(searchFilters));
 

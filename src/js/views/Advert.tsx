@@ -1,5 +1,5 @@
 import React, { DragEvent, useEffect, useRef, useState } from 'react';
-import { Camera, Star, Calculator, FileText, Video, ChevronUp, ChevronRight, Info, X, RotateCw, Trash2 } from 'lucide-react';
+import { Camera, Star, Calculator, FileText, Video, ChevronUp, ChevronRight, Info, X, RotateCw, Trash2, ArrowLeft } from 'lucide-react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/index';
@@ -257,6 +257,10 @@ const Advert: React.FC = () => {
     fetchListingData();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (!vehicleData && !id) {
     return <Navigate to="/selling/find-car" replace />;
   }
@@ -451,6 +455,14 @@ const Advert: React.FC = () => {
         // @ts-ignore
       <Form>
     <div className="max-w-4xl mx-auto bg-white px-4 sm:px-6 lg:px-8">
+      <button
+        type="button"
+        onClick={() => navigate('/selling/find-car')}
+        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 pt-6"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="font-medium">Back</span>
+      </button>
       <div 
         className={`bg-gray-50 p-4 sm:p-8 rounded-lg text-center mb-6 transition-colors
           ${isDragging ? 'bg-blue-50 border-2 border-dashed border-blue-500' : ''}`}
@@ -737,6 +749,7 @@ const Advert: React.FC = () => {
         ].map((section, index) => (
           <button
             key={index}
+            onClick={(e) => e.preventDefault()}
             className="w-full flex items-center justify-between p-4 hover:bg-gray-50 border-b"
           >
             <div className="flex items-center gap-3">

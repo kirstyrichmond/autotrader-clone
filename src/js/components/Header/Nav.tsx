@@ -58,7 +58,7 @@ const Nav: React.FC = () => {
 
     const menuItems = [
         { name: "Used cars", path: "/search?radius=NATIONAL&page=1&perPage=1000" },
-        { name: "New cars", path: "/search?radius=NATIONAL&page=1&perPage=1000" },
+        // { name: "New cars", path: "/search?radius=NATIONAL&page=1&perPage=1000" },
         { name: "Sell your car", path: "/selling/find-car", requiresAuth: true },
     ];
 

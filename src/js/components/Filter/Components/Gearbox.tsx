@@ -52,7 +52,6 @@ const Gearbox = () => {
           </div>
         </div>
       ))}
-
       {selectedTransmissions.length > 0 && (
         <button
           type="button"
